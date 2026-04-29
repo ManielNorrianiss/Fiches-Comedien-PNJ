@@ -516,6 +516,164 @@
     margin-top: 0.3rem;
   }
 
+  /* ====== SYSTÈME DYNAMIQUE (sorts/habiletés filtrés) ====== */
+
+  .chip.restriction {
+    border-color: var(--gold-bright);
+    border-style: dashed;
+    position: relative;
+  }
+  .chip.restriction::before {
+    content: '★ ';
+    color: var(--gold-bright);
+  }
+
+  .chip.disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    pointer-events: none;
+    text-decoration: line-through;
+    text-decoration-color: rgba(168, 50, 50, 0.6);
+  }
+  .chip.disabled:hover {
+    border-color: var(--border);
+    color: var(--parchment-dark);
+  }
+
+  .limit-counter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(184, 137, 58, 0.08);
+    border: 1px solid var(--gold);
+    border-radius: 3px;
+    padding: 0.5rem 0.8rem;
+    margin-bottom: 0.6rem;
+    font-family: 'Cinzel', serif;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .limit-counter .label { color: var(--parchment-dark); }
+  .limit-counter .count { color: var(--gold-bright); font-weight: 600; }
+  .limit-counter.full {
+    background: rgba(168, 50, 50, 0.12);
+    border-color: var(--crimson-bright);
+  }
+  .limit-counter.full .count { color: var(--crimson-bright); }
+
+  .limit-global {
+    background: linear-gradient(135deg, rgba(184, 137, 58, 0.15), rgba(107, 31, 31, 0.05));
+    border: 1px solid var(--gold-bright);
+    border-radius: 4px;
+    padding: 0.7rem 1rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    color: var(--parchment-light);
+  }
+  .limit-global strong {
+    color: var(--gold-bright);
+    font-size: 1.3rem;
+    font-weight: 700;
+  }
+  .limit-global.full {
+    background: rgba(168, 50, 50, 0.15);
+    border-color: var(--crimson-bright);
+  }
+  .limit-global.full strong { color: var(--crimson-bright); }
+
+  .progression-box {
+    background: linear-gradient(135deg, rgba(184, 137, 58, 0.12), rgba(107, 31, 31, 0.05));
+    border: 1px solid var(--gold);
+    border-radius: 4px;
+    padding: 1rem;
+    margin-top: 0.5rem;
+  }
+  .progression-title {
+    font-family: 'Cinzel', serif;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--gold-bright);
+    margin-bottom: 0.6rem;
+  }
+  .progression-list { list-style: none; padding: 0; margin: 0; }
+  .progression-list li {
+    padding: 0.4rem 0;
+    color: var(--parchment-light);
+    font-size: 0.95rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    border-bottom: 1px dashed rgba(184, 137, 58, 0.2);
+  }
+  .progression-list li:last-child { border-bottom: none; }
+  .progression-list li.locked { color: var(--parchment-dark); opacity: 0.45; }
+
+  .lune-badge {
+    background: var(--gold-deep);
+    color: var(--parchment-light);
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+    flex-shrink: 0;
+    min-width: 48px;
+    text-align: center;
+  }
+  .progression-list li.locked .lune-badge { background: rgba(138, 100, 32, 0.3); }
+
+  .spell-group { margin-bottom: 1rem; }
+  .spell-group-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .spell-group-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, var(--gold-deep), transparent);
+  }
+
+  .class-prompt {
+    text-align: center;
+    padding: 1.5rem 1rem;
+    color: var(--parchment-dark);
+    font-style: italic;
+    border: 1px dashed var(--border);
+    border-radius: 4px;
+  }
+
+  .info-banner {
+    padding: 0.7rem 0.9rem;
+    background: rgba(184, 137, 58, 0.08);
+    border-left: 2px solid var(--gold);
+    border-radius: 0 3px 3px 0;
+    font-size: 0.88rem;
+    color: var(--parchment-light);
+    margin-bottom: 0.8rem;
+  }
+  .info-banner strong { color: var(--gold-bright); }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.7rem;
+  }
+  @media (max-width: 380px) {
+    .stats-row { grid-template-columns: 1fr; }
+  }
+
   .scroll-top {
     position: fixed;
     bottom: 5rem;
@@ -812,7 +970,7 @@
         </div>
       </div>
 
-      <!-- 8. CAPACITÉS -->
+      <!-- 8. CAPACITÉS (système dynamique - identique à Fiche Figurant) -->
       <div class="section">
         <div class="section-header" onclick="toggleSection(this)">
           <div class="section-num">8</div>
@@ -820,58 +978,29 @@
           <div class="chevron">▼</div>
         </div>
         <div class="section-body">
-          <div class="field">
-            <label class="field-label">Classe de base</label>
-            <select name="classe_base" id="classe_base"></select>
+
+          <div class="stats-row">
+            <div class="field">
+              <label class="field-label">Classe de base</label>
+              <select name="classe_base" id="classe_base" onchange="updateProgression()"></select>
+            </div>
+            <div class="field">
+              <label class="field-label">Nombre de lunes</label>
+              <input type="number" name="lunes" id="lunes" placeholder="Ex: 6" min="0" max="50" oninput="updateProgression()">
+            </div>
           </div>
 
-          <div class="field">
-            <label class="field-label">Habiletés / Sorts de la classe de base</label>
-            <textarea name="habilites_base" rows="3" placeholder="Ex: Mage — sorts en rapport à l'eau, au charme…"></textarea>
-            <div class="dep-hint" id="hint_classe">Selon la lune, choisis les habiletés/sorts appropriés (lune 1, 3, 6, 10, 15, 16).</div>
+          <div id="progression"></div>
+
+          <div id="capacitesContainer">
+            <div class="class-prompt">
+              Sélectionne d'abord une <strong style="color:var(--gold-bright)">classe de base</strong> et des <strong style="color:var(--gold-bright)">lunes</strong>.
+            </div>
           </div>
 
-          <div class="field">
-            <label class="field-label">Classe prestige</label>
-            <input type="text" name="classe_prestige" placeholder="Nom de la classe prestige (à 20+ lunes)">
-          </div>
-
-          <div class="field">
-            <label class="field-label">Habiletés / Sorts de prestige</label>
-            <textarea name="habilites_prestige" rows="3" placeholder="Jusqu'à combien de lunes? Copier-coller la partie pertinente…"></textarea>
-          </div>
-
-          <div class="field">
-            <label class="field-label">Divinité (si prêtre)</label>
-            <select name="divinite" id="divinite"></select>
-            <div class="field-hint">Affecte les sorts disponibles si c'est un prêtre.</div>
-          </div>
-
-          <div class="field">
-            <label class="field-label">Sorts/Capacités spéciales (hors classe)</label>
-            <textarea name="capacites_speciales" rows="3" placeholder="Ex: capacité d'élu, sort d'extra, force surnaturelle, immunités…"></textarea>
-          </div>
-
-          <div class="field">
-            <label class="field-label">Force surnaturelle</label>
-            <select name="force">
-              <option value="">— Aucune —</option>
-              <option>Force mineure / Surnaturelle mineure (10 pieds)</option>
-              <option>Force surnaturelle (15 pieds)</option>
-              <option>Force surnaturelle majeure (25 pieds)</option>
-              <option>Force de dragon (60 pieds)</option>
-              <option>Force divine (80 pieds)</option>
-            </select>
-          </div>
-
-          <div class="field">
-            <label class="field-label">Points de vie</label>
-            <input type="text" name="pv" placeholder="Ex: 5 PV de base + armure">
-          </div>
-
-          <div class="field">
-            <label class="field-label">Autres notes (équipement, immunités, résistances…)</label>
-            <textarea name="capacites_autre" rows="3" placeholder="Tout ce qui ne rentre pas dans les autres champs…"></textarea>
+          <div class="field" style="margin-top:1rem;">
+            <label class="field-label">Notes / Aptitudes additionnelles</label>
+            <textarea name="aptitudes_libre" rows="3" placeholder="Aptitudes hors classe, immunités raciales, capacités spéciales, classe prestige, force surnaturelle, points de vie…"></textarea>
           </div>
         </div>
       </div>
@@ -944,14 +1073,14 @@
 
 const DATA = {
   races: [
-    'Humain', 'Elfe', 'Elfe Noir', 'Moriquendi', 'Nain', 'Hobbit', 'Fée',
+    'Humain', 'Numénoréen', 'Elfe', 'Elfe Noir', 'Moriquendi', 'Nain', 'Hobbit', 'Fée',
     'Ratkins', 'Ogre', 'Gobelin', 'Orque Vert',
     'Mort-Vivant', 'Demi-race', 'Autre / À déterminer'
   ],
 
   peuples: [
     'Aucun / Indépendant',
-    'Pandor', 'Lossado', 'Eldoriath', 'Moriquendi', 'Peuple des Sables',
+    'Pandor', 'Lossado', 'Eldoriath', 'Numénor', 'Moriquendi', 'Peuple des Sables',
     'Nazzakri', 'Orques (Horde du Chaos)', 'Elfes Noirs', 'Oz', 'Khazad',
     'Autre'
   ],
@@ -1005,10 +1134,289 @@ const DATA = {
 
   perte_controle: ['Se met en colère', 'Fuit', 'Devient violent(e)', 'Pleure',
                    'Lance un sort', 'Appelle à l\'aide', 'Se replie sur soi-même',
-                   'Devient sarcastique', 'Menace', 'Capitule']
+                   'Devient sarcastique', 'Menace', 'Capitule'],
+
+  habiletes_guerrier: [
+    '+2 PV de base (max 1)',
+    'Résistance à une flèche (max 2)',
+    'Immunité à frayeur',
+    'Combat à l\'aveugle',
+    'Intimidation (crie pour infliger frayeur)',
+    '+3 PA torse uniquement (max 1)',
+    'Bris de bouclier (max 1)',
+    'Résistance à un bris de bouclier',
+    'Désarçonner (max 1)',
+    'Poigne de fer (résiste à désarçonner)'
+  ],
+
+  // ====== SORTS DE MAGE (Arcane/Essence) — par niveau, du Livre des Règles ======
+  sorts_mage_faibles: [
+    'Amitié', 'Asphyxie', 'Aveuglement', 'Chant', 'Communication avec les morts',
+    'Conservation d\'un corps', 'Danse', 'Déshydratation', 'Détection de la magie',
+    'Ébriété', 'Enracinement', 'Flamme continuelle', 'Glisse', 'Incinération',
+    'Joie', 'Mot de commandement', 'Pétrification', 'Rage', 'Retour à la terre',
+    'Sable mouvant', 'Silence', 'Sommeil', 'Vision spectrale'
+  ],
+
+  sorts_mage_intermediaires: [
+    'Apathie', 'Armes brûlantes', 'Attraction végétale', 'Cercle de protection',
+    'Charme', 'Commandement', 'Désarmure', 'Don de vie', 'Douleur', 'Folie',
+    'Frayeur', 'Main électrique', 'Main de feu', 'Main vampirique', 'Paralysie',
+    'Protection végétale', 'Retour en enfance', 'Statue', 'Tempête de vent',
+    'Tempête de sable', 'Tsunami', 'Tremblement de terre', 'Vieillissement'
+  ],
+
+  sorts_mage_majeurs: [
+    'Arrêt du temps', 'Blessure critique', 'Boule de feu', 'Cristallisation',
+    'Désintégration',
+    {nom: 'Disque lunaire', restriction: {peuple: 'Lossado'}},
+    {nom: 'Disque solaire', restriction: {peuple: 'Pandor'}},
+    'Dissipation de la magie', 'Domination', 'Étoile filante', 'Étranglement',
+    'Flèche magique', 'Foudre', 'Glaciation', 'Missile magique', 'Mort',
+    'Orbe d\'acide', 'Oubli', 'Répulsion', 'Transport dans le plan des ombres'
+  ],
+
+  // ====== SORTS DE PRÊTRE par divinité (pages 84-89) ======
+  divinites_pretre: [
+    'Luminis', 'Obscur',
+    'Feyris (Kami — Eau)', 'Hayabusa (Kami — Air)', 'Kitsune (Kami — Terre)',
+    'Daisuke (Kami — Feu)', 'Zhanshi (Kami — Métal)', 'Yurei (Kami — Éther)',
+    'Arianne (Sainte Triade)', 'Eireiné (Sainte Triade)', 'Thémis (Sainte Triade)',
+    'Anthares (Cercle Noir)', 'Darkness (Cercle Noir)', 'Simorgh (Cercle Noir)',
+    'Menades (Cercle Noir)', 'Crom (Cercle Noir)', 'Vélès (Cercle Noir)',
+    'Manwe (Valar)', 'Varda (Valar)', 'Aulë (Valar)', 'Oromë (Valar)',
+    'Ulmo (Valar)', 'Namo (Valar)', 'Yavannah (Valar)', 'Vana (Valar)',
+    'Irmo (Valar)', 'Vairë (Valar)', 'Nessa (Valar)', 'Tulkas (Valar)',
+    'Estë (Valar)', 'Nienna (Valar)',
+    'Maât (Ishra)', 'Rê/Rhâ (Ishra)', 'Osiris (Ishra)', 'Bastet (Ishra)',
+    'Horus (Ishra)', 'Anubis (Ishra)', 'Sekhmet (Ishra)',
+    'Isis (Ishra)', 'Apophis (Ishra)', 'Soutek (Ishra)',
+    'Chamanisme (Tribu des Ancêtres)',
+    'Araushnée (Souterrains)',
+    'Seth', 'Points cardinaux d\'Oz', 'Autre'
+  ],
+
+  // ====== MAPPING RACE -> DIVINITÉS ACCESSIBLES ======
+  // Liste des divinités qu'une race peut adorer (selon ton univers Fléau)
+  divinites_par_race: {
+    'Humain': null, // null = toutes les divinités
+    'Elfe': [
+      'Luminis', 'Obscur',
+      'Manwe (Valar)', 'Varda (Valar)', 'Aulë (Valar)', 'Oromë (Valar)',
+      'Ulmo (Valar)', 'Namo (Valar)', 'Yavannah (Valar)', 'Vana (Valar)',
+      'Irmo (Valar)', 'Vairë (Valar)', 'Nessa (Valar)', 'Tulkas (Valar)',
+      'Estë (Valar)', 'Nienna (Valar)'
+    ],
+    'Elfe Noir': ['Araushnée (Souterrains)'],
+    'Moriquendi': ['Araushnée (Souterrains)'],
+    'Nain': [
+      'Manwe (Valar)', 'Varda (Valar)', 'Aulë (Valar)', 'Oromë (Valar)',
+      'Ulmo (Valar)', 'Namo (Valar)', 'Yavannah (Valar)', 'Vana (Valar)',
+      'Irmo (Valar)', 'Vairë (Valar)', 'Nessa (Valar)', 'Tulkas (Valar)',
+      'Estë (Valar)', 'Nienna (Valar)'
+    ],
+    'Numénoréen': [
+      'Manwe (Valar)', 'Varda (Valar)', 'Aulë (Valar)', 'Oromë (Valar)',
+      'Ulmo (Valar)', 'Namo (Valar)', 'Yavannah (Valar)', 'Vana (Valar)',
+      'Irmo (Valar)', 'Vairë (Valar)', 'Nessa (Valar)', 'Tulkas (Valar)',
+      'Estë (Valar)', 'Nienna (Valar)'
+    ],
+    'Hobbit': [
+      'Luminis',
+      'Yavannah (Valar)', 'Vana (Valar)', 'Estë (Valar)'
+    ],
+    'Fée': [
+      'Vana (Valar)', 'Yavannah (Valar)', 'Oromë (Valar)', 'Nienna (Valar)'
+    ],
+    'Ratkins': [
+      'Anthares (Cercle Noir)', 'Darkness (Cercle Noir)', 'Simorgh (Cercle Noir)',
+      'Menades (Cercle Noir)', 'Crom (Cercle Noir)', 'Vélès (Cercle Noir)',
+      'Araushnée (Souterrains)'
+    ],
+    'Ogre': [
+      'Crom (Cercle Noir)', 'Tulkas (Valar)',
+      'Anthares (Cercle Noir)', 'Darkness (Cercle Noir)', 'Simorgh (Cercle Noir)',
+      'Menades (Cercle Noir)', 'Vélès (Cercle Noir)'
+    ],
+    'Gobelin': [
+      'Anthares (Cercle Noir)', 'Darkness (Cercle Noir)', 'Simorgh (Cercle Noir)',
+      'Menades (Cercle Noir)', 'Crom (Cercle Noir)', 'Vélès (Cercle Noir)',
+      'Araushnée (Souterrains)'
+    ],
+    'Orque Vert': [
+      'Anthares (Cercle Noir)', 'Darkness (Cercle Noir)', 'Simorgh (Cercle Noir)',
+      'Menades (Cercle Noir)', 'Crom (Cercle Noir)', 'Vélès (Cercle Noir)'
+    ],
+    'Mort-Vivant': [
+      'Simorgh (Cercle Noir)', 'Apophis (Ishra)', 'Anubis (Ishra)'
+    ],
+    'Demi-race': null, // toutes
+    'Autre / À déterminer': null // toutes
+  },
+
+  // ====== CLASSIFICATION DES SORTS DE PRÊTRE PAR NIVEAU ======
+  // Selon le Livre des Règles 2024
+  // Permet de filtrer les sorts disponibles selon les lunes du prêtre
+  sorts_pretre_niveaux: {
+    faibles: [
+      'Amitié', 'Animation d\'un zombie', 'Apaisement', 'Asphyxie', 'Aveuglement',
+      'Chant', 'Communication avec les morts', 'Conservation d\'un corps', 'Courage',
+      'Danse', 'Déshydratation', 'Détection du bien ou du mal', 'Ébriété',
+      'Enracinement', 'Flamme continuelle', 'Guérison', 'Guérison des maladies',
+      'Incinération', 'Joie', 'Mot de commandement', 'Neutralisation du poison',
+      'Parler avec les animaux', 'Pétrification', 'Protection contre la mort',
+      'Rage', 'Reconstruction', 'Retour à la terre', 'Sable mouvant', 'Silence',
+      'Sommeil', 'Vision spectrale', 'Vision véritable'
+    ],
+    intermediaires: [
+      'Animation d\'un squelette', 'Apathie', 'Armes brûlantes', 'Attraction végétale',
+      'Blasphème', 'Cercle de protection', 'Charme', 'Commandement', 'Contagion',
+      'Contrôle des morts-vivants', 'Demande divine', 'Désarmure', 'Détection de la vérité',
+      'Don de vie', 'Douleur', 'Frayeur', 'Main électrique', 'Main de feu',
+      'Main vampirique', 'Marteau divin', 'Mot de foi', 'Paralysie',
+      'Protection végétale', 'Putréfaction', 'Régénération d\'un membre',
+      'Réincarnation', 'Retour en enfance', 'Statue', 'Tempête de vent',
+      'Tempête de sable', 'Tsunami', 'Tremblement de terre', 'Vade Rétro',
+      'Antée Rétro', 'Vieillissement'
+    ],
+    majeurs: [
+      'Arrêt du temps', 'Blessure critique', 'Boule de feu', 'Châtiment',
+      'Contrôle des créatures des anciens dieux',
+      {nom: 'Disque lunaire', restriction: {peuple: 'Lossado'}},
+      {nom: 'Disque solaire', restriction: {peuple: 'Pandor'}},
+      'Divination', 'Domination', 'Étoile filante', 'Étranglement',
+      'Flèche magique', 'Foudre',
+      'Foudre maudite (affecte seulement les entités du bien)',
+      'Foudre sacrée (affecte seulement les créatures maudites)',
+      'Glaciation', 'Mort', 'Orbe d\'acide', 'Oubli', 'Purification',
+      'Rage céleste', 'Rage infernale', 'Résurrection', 'Sanctuaire',
+      'Transport dans le plan des ombres', 'Vérité absolue'
+    ]
+  },
+
+  sorts_pretre_par_divinite: {
+    'Luminis': ['Apaisement', 'Amitié', 'Courage', 'Détection de la vérité', 'Foudre Sacrée', 'Guérison', 'Guérison des maladies', 'Joie', 'Main de feu', 'Marteau Divin', 'Mot de foi', 'Protection contre la mort', 'Régénération d\'un membre', 'Résurrection', 'Neutralisation du poison', 'Vision spectrale'],
+    'Obscur': ['Animation d\'un squelette', 'Apaisement', 'Communication avec les Morts', 'Courage', 'Détection de la vérité', 'Frayeur', 'Guérison', 'Guérison des maladies', 'Neutralisation du poison', 'Mot de foi', 'Protection contre la mort', 'Purification', 'Régénération d\'un membre', 'Résurrection', 'Vision spectrale'],
+    'Feyris (Kami — Eau)': ['1 sort relié à l\'élément de l\'Eau (à choisir avec animation)'],
+    'Hayabusa (Kami — Air)': ['1 sort relié à l\'élément de l\'Air (à choisir avec animation)'],
+    'Kitsune (Kami — Terre)': ['1 sort relié à l\'élément de la Terre (à choisir avec animation)'],
+    'Daisuke (Kami — Feu)': ['1 sort relié à l\'élément du Feu (à choisir avec animation)'],
+    'Zhanshi (Kami — Métal)': ['1 sort relié à l\'élément du Métal (à choisir avec animation)'],
+    'Yurei (Kami — Éther)': ['1 sort relié à l\'élément de l\'éther (à choisir avec animation)'],
+    'Arianne (Sainte Triade)': ['Armes Brûlantes', 'Apaisement', 'Courage', 'Désarmure', 'Guérison', 'Frayeur', 'Résurrection', 'Marteau Divin', 'Rage', 'Rage Céleste'],
+    'Eireiné (Sainte Triade)': ['Apaisement', 'Cercle De Protection', 'Guérison', 'Guérison Des Maladies', 'Neutralisation du poison', 'Protection Contre La Mort', 'Régénération d\'un membre', 'Résurrection', 'Sommeil'],
+    'Thémis (Sainte Triade)': ['Courage', 'Détection de la vérité', 'Mot de Commandement', 'Guérison', 'Apaisement', 'Mot de foi', 'Résurrection', 'Silence', 'Marteau divin', 'Vision spectrale'],
+    'Anthares (Cercle Noir)': ['Arme brûlante', 'Aveuglement', 'Blasphème', 'Boule de feu', 'Étranglement', 'Guérison', 'Main de feu', 'Mot de commandement', 'Rage', 'Résurrection'],
+    'Darkness (Cercle Noir)': ['Apathie', 'Boule de feu', 'Blasphème', 'Charme', 'Danse', 'Domination', 'Ébriété', 'Foudre Maudite', 'Flamme continuelle', 'Guérison', 'Main de feu', 'Silence'],
+    'Simorgh (Cercle Noir)': ['Animation d\'un Squelette', 'Animation d\'un Zombie', 'Communication avec les morts', 'Main Vampirique', 'Protection contre la Mort', 'Reconstruction', 'Conservation d\'un corps', 'Mort', 'Vision spectrale'],
+    'Menades (Cercle Noir)': ['Animation d\'un zombie', 'Contagion', 'Ébriété', 'Douleur', 'Paralysie', 'Putréfaction', 'Reconstruction', 'Frayeur', 'Neutralisation du poison', 'Orbe d\'Acide'],
+    'Crom (Cercle Noir)': ['Armes Brûlantes', 'Courage', 'Désarmure', 'Frayeur', 'Guérison', 'Main de Feu', 'Marteau Divin', 'Neutralisation du Poison', 'Rage', 'Rage Infernale', 'Résurrection'],
+    'Vélès (Cercle Noir)': ['Aveuglement', 'Charme', 'Châtiment', 'Danse', 'Demande Divine', 'Détection de la vérité', 'Divination', 'Frayeur', 'Guérison', 'Neutralisation du poison', 'Oublie', 'Parler avec les animaux'],
+    'Manwe (Valar)': ['Courage', 'Flamme Continuelle', 'Guérison', 'Vision spectrale', 'Tempête de vent', 'Main électrique', 'Foudre', 'Mot de commandement', 'Mot de foi'],
+    'Varda (Valar)': ['Cercle de protection', 'Étoile filante', 'Guérison', 'Guérison des maladies', 'Mot de foi', 'Protection contre la mort', 'Résurrection', 'Sommeil', 'Vision spectrale'],
+    'Aulë (Valar)': ['Armes Brûlantes', 'Incinération', 'Désarmure', 'Flamme Continuelle', 'Guérison', 'Mains de feu', 'Marteau Divin', 'Pétrification', 'Régénération d\'un membre', 'Boule de feu'],
+    'Oromë (Valar)': ['Apaisement', 'Attraction végétal', 'Enracinement', 'Flèche Magique', 'Guérison', 'Parler avec les animaux', 'Protection végétale', 'Neutralisation du poison', 'Régénération', 'Sommeil'],
+    'Ulmo (Valar)': ['Asphyxie', 'Cercle de protection', 'Courage', 'Déshydratation', 'Guérison', 'Rage', 'Glaciation', 'Régénération d\'un membre', 'Tsunami'],
+    'Namo (Valar)': ['Vieillissement', 'Protection contre la mort', 'Communication avec les morts', 'Mort', 'Vision spectrale', 'Silence', 'Demande Divine', 'Apathie', 'Retour à la terre', 'Cercle de Protection'],
+    'Yavannah (Valar)': ['Apaisement', 'Amitié', 'Guérison', 'Régénération d\'un membre', 'Résurrection', 'Sommeil', 'Enracinement', 'Attraction Végétal', 'Guérison des maladies', 'Protection végétal'],
+    'Vana (Valar)': ['Amitié', 'Danse', 'Chant', 'Charme', 'Guérison', 'Parler avec les animaux', 'Régénération d\'un membre', 'Résurrection', 'Retour en enfance'],
+    'Irmo (Valar)': ['Demande Divine', 'Divination', 'Guérison', 'Oublie', 'Protection contre la mort', 'Sommeil', 'Vieillissement', 'Vision spectrale', 'Retour en enfance'],
+    'Vairë (Valar)': ['Arrêt du temps', 'Demande Divine', 'Guérison', 'Oublie', 'Statue', 'Protection contre la mort', 'Sommeil', 'Vieillissement', 'Vision spectrale', 'Retour en enfance'],
+    'Nessa (Valar)': ['Armes Brûlantes', 'Courage', 'Danse', 'Guérison', 'Enracinement', 'Neutralisation du poison', 'Marteau Divin', 'Mot de foi', 'Protection contre la mort', 'Régénération d\'un membre'],
+    'Tulkas (Valar)': ['Armes Brûlantes', 'Courage', 'Frayeur', 'Main électrique', 'Marteau Divin', 'Mot de foi', 'Protection contre la mort', 'Blasphème', 'Neutralisation du poison'],
+    'Estë (Valar)': ['Apaisement', 'Guérison', 'Guérison des maladies', 'Neutralisation du poison', 'Protection contre la mort', 'Protection végétal', 'Régénération d\'un membre', 'Résurrection', 'Sommeil'],
+    'Nienna (Valar)': ['Apaisement', 'Joie', 'Guérison', 'Sommeil', 'Enracinement', 'Guérison des maladies', 'Communication avec les morts', 'Déshydratation', 'Réincarnation', 'Châtiment', 'Oublie'],
+    'Maât (Ishra)': ['Apaisement', 'Détection de la vérité', 'Vision véritable', 'Mot de commandement', 'Guérison', 'Neutralisation du poison', 'Résurrection'],
+    'Rê/Rhâ (Ishra)': ['Apaisement', 'Amitié', 'Courage', 'Détection de la vérité', 'Sanctuaire', 'Guérison', 'Guérison des maladies', 'Joie', 'Main de feu', 'Marteau Divin', 'Mot de foi', 'Protection contre la mort', 'Régénération d\'un membre', 'Résurrection', 'Neutralisation du poison', 'Vision spectrale'],
+    'Osiris (Ishra)': ['Protection contre la mort', 'Guérison', 'Désarmure', 'Retour à la terre', 'Mort', 'Réincarnation', 'Sable mouvant', 'Détection de la vérité', 'Domination', 'Vision spectrale'],
+    'Bastet (Ishra)': ['Vision spectrale', 'Aveuglement', 'Protection contre la mort', 'Déshydratation', 'Tempête de Sable', 'Rage', 'Charme', 'Châtiment', 'Paralysie'],
+    'Horus (Ishra)': ['Rage', 'Courage', 'Mot de commandement', 'Arme Brûlante', 'Désarmure', 'Neutralisation du poison', 'Vision spectrale', 'Guérison', 'Frayeur', 'Blessure critique'],
+    'Anubis (Ishra)': ['Guérison', 'Vision spectrale', 'Conservation d\'un corps', 'Reconstruction', 'Vieillissement', 'Putréfaction', 'Paralysie', 'Étranglement', 'Transport dans le plan des ombres', 'Animation d\'un squelette'],
+    'Sekhmet (Ishra)': ['Rage', 'Courage', 'Mot de commandement', 'Vision Véritable', 'Guérison', 'Rajeunissement', 'Protection contre la mort', 'Boule de Feu'],
+    'Isis (Ishra)': ['Apathie', 'Courage', 'Guérison', 'Apaisement', 'Don de vie', 'Cercle de Protection', 'Régénération', 'Oublie', 'Résurrection', 'Guérison des maladies'],
+    'Apophis (Ishra)': ['Rage', 'Mot de commandement', 'Transport dans le plan des ombres', 'Étranglement', 'Mort', 'Main vampirique', 'Animation d\'un Squelette', 'Blasphème', 'Communication avec les morts', 'Reconstruction', 'Conservation d\'un corps', 'Vision spectrale'],
+    'Soutek (Ishra)': ['Guérison', 'Détection de la vérité', 'Vision Véritable', 'Flamme continuelle', 'Mot de foi', 'Blasphème', 'Cercle de protection', 'Marteau divin', 'Vérité absolue', 'Résurrection'],
+    'Chamanisme (Tribu des Ancêtres)': ['Communication avec les morts', 'Ébriété', 'Guérison', 'Rage', 'Résurrection', 'Armes Brûlantes', 'Frayeur', 'Main de Feu', 'Foudre', 'Vision spectrale', 'Douleur', 'Neutralisation du poison', 'Domination', 'Blasphème', 'Boule de feu', 'Pétrification', 'Parler avec les animaux', 'Réincarnation', 'Tempête de vent', 'Tremblement de Terre', 'Tsunami'],
+    'Aranaé (Souterrains)': ['(Divinité disparue — voir animation)'],
+    'Araushnée (Souterrains)': ['Arme Brûlante', 'Charme', 'Blasphème', 'Paralysie', 'Neutralisation du poison', 'Guérison', 'Main de feu', 'Rage', 'Aveuglement', 'Étranglement', 'Danse', 'Domination'],
+    'Loth (Souterrains)': ['(Divinité disparue — voir animation)'],
+    'Seth': ['(Selon la forme adoptée — voir animation)'],
+    'Points cardinaux d\'Oz': ['(À découvrir en jeu — voir animation)'],
+    'Autre': ['(Voir le Livre des Règles ou l\'animation)']
+  },
+
+  // Progression par lune (sans la 16e lune comme demandé)
+  progression: {
+    'Guerrier': [
+      {lune: 1, gain: '+1 PV & 1 habileté guerrière'},
+      {lune: 3, gain: '+1 PV & 1 habileté guerrière'},
+      {lune: 6, gain: '+1 PV & 1 habileté guerrière'},
+      {lune: 10, gain: '+1 PV & 1 habileté guerrière'},
+      {lune: 15, gain: '+1 PV & 1 habileté guerrière'}
+    ],
+    'Mage': [
+      {lune: 1, gain: 'Sort Faible + Détection de la magie'},
+      {lune: 3, gain: 'Sort Faible'},
+      {lune: 6, gain: 'Sort Intermédiaire'},
+      {lune: 10, gain: 'Sort Intermédiaire'},
+      {lune: 15, gain: 'Sort Majeur'}
+    ],
+    'Prêtre': [
+      {lune: 1, gain: 'Sort Faible divin + Détection bien/mal'},
+      {lune: 3, gain: 'Sort Faible divin'},
+      {lune: 6, gain: 'Sort Intermédiaire divin'},
+      {lune: 10, gain: 'Sort Intermédiaire divin + (Vade Rétro / Antée Rétro / Contrôle morts-vivants)'},
+      {lune: 15, gain: 'Sort Majeur divin'}
+    ],
+    'Fée': [
+      {lune: 1, gain: 'Pouvoir de classe Fée'},
+      {lune: 3, gain: 'Pouvoir de classe Fée'},
+      {lune: 6, gain: 'Pouvoir de classe Fée'},
+      {lune: 9, gain: 'Pouvoir de classe Fée'},
+      {lune: 12, gain: 'Pouvoir de classe Fée (max base)'}
+    ],
+    'Ogre': [
+      {lune: 1, gain: 'Pouvoir de classe Ogre'},
+      {lune: 3, gain: 'Faim de l\'ogre 1 (+1 PV pour 1 corps dévoré)'},
+      {lune: 6, gain: 'Pouvoir de classe Ogre'},
+      {lune: 9, gain: 'Faim de l\'ogre 2 (+2 PV pour 2 corps)'},
+      {lune: 12, gain: 'Faim de l\'ogre 3'},
+      {lune: 20, gain: 'Faim de l\'ogre 4-5 (max +5 PV)'}
+    ],
+    'Skaven': [
+      {lune: 1, gain: 'Pouvoir de classe Skaven'},
+      {lune: 3, gain: 'Pouvoir de classe Skaven'},
+      {lune: 6, gain: 'Pouvoir de classe Skaven'},
+      {lune: 9, gain: 'Pouvoir de classe Skaven'},
+      {lune: 12, gain: 'Pouvoir de classe Skaven'}
+    ]
+  },
+
+  // ====== LIMITES DE SÉLECTION SELON LA LUNE ======
+  // getLimits(classe, lunes) retourne {global, faibles, intermediaires, majeurs} ou {habiletes}
+  getLimits: function(classe, lunes) {
+    if (classe === 'Guerrier') {
+      // 1 habileté par étape de progression
+      const steps = [1, 3, 6, 10, 15];
+      const count = steps.filter(s => lunes >= s).length;
+      return { habiletes: count };
+    }
+    if (classe === 'Mage' || classe === 'Prêtre') {
+      // Pour mage/prêtre : structure cumulative
+      // L1 = 1 faible, L3 = 2 faibles, L6 = 2f+1i, L10 = 2f+2i, L15 = 2f+2i+1m
+      let f = 0, i = 0, m = 0;
+      if (lunes >= 1) f = 1;
+      if (lunes >= 3) f = 2;
+      if (lunes >= 6) i = 1;
+      if (lunes >= 10) i = 2;
+      if (lunes >= 15) m = 1;
+      return { faibles: f, intermediaires: i, majeurs: m, global: f + i + m };
+    }
+    return null;
+  }
 };
 
-const PEUPLES_SCENARISTE = ['Pandor', 'Lossado', 'Eldoriath', 'Moriquendi',
+const PEUPLES_SCENARISTE = ['Pandor', 'Lossado', 'Eldoriath', 'Numénor', 'Moriquendi',
   'Peuple des Sables', 'Nazzakri', 'Orques', 'Elfes Noirs', 'Oz', 'Khazad', 'Autre'];
 
 const state = { selections: {} };
@@ -1018,8 +1426,27 @@ function init() {
   fillSelect('race', DATA.races, true);
   fillSelect('peuple', DATA.peuples, true);
   fillSelect('peuple_scenariste', PEUPLES_SCENARISTE, true);
-  fillSelect('classe_base', DATA.classes, true);
-  fillSelect('divinite', DATA.divinites, true);
+
+  // Remplir classe_base avec les classes compatibles avec le système dynamique
+  const classeSelect = document.getElementById('classe_base');
+  if (classeSelect) {
+    classeSelect.innerHTML = '';
+    const opts = [
+      {value: '', label: '— Aucune —'},
+      {value: 'Guerrier', label: 'Guerrier'},
+      {value: 'Mage', label: 'Mage'},
+      {value: 'Prêtre', label: 'Prêtre'},
+      {value: 'Fée', label: 'Classe raciale Fée'},
+      {value: 'Ogre', label: 'Classe raciale Ogre'},
+      {value: 'Skaven', label: 'Skaven (Ratkins)'}
+    ];
+    opts.forEach(o => {
+      const opt = document.createElement('option');
+      opt.value = o.value;
+      opt.textContent = o.label;
+      classeSelect.appendChild(opt);
+    });
+  }
 
   fillChips('qualites', DATA.qualites);
   fillChips('defauts', DATA.defauts);
@@ -1029,7 +1456,12 @@ function init() {
   fillChips('favorise', DATA.favorise);
   fillChips('perte_controle', DATA.perte_controle);
 
-  document.getElementById('classe_base').addEventListener('change', updateClasseHint);
+  // Listeners pour mettre à jour la progression dynamique
+  // (race et peuple changent les sorts disponibles via filtres)
+  const raceEl = document.getElementById('race');
+  const peupleEl = document.getElementById('peuple');
+  if (raceEl) raceEl.addEventListener('change', updateProgression);
+  if (peupleEl) peupleEl.addEventListener('change', updateProgression);
 
   window.addEventListener('scroll', () => {
     const btn = document.getElementById('scrollTop');
@@ -1056,17 +1488,43 @@ function fillSelect(id, options, withPlaceholder) {
   });
 }
 
-function fillChips(name, options) {
+function fillChips(name, options, context = {}) {
   const containers = document.querySelectorAll(`.chips[data-name="${name}"]`);
   containers.forEach(container => {
     container.innerHTML = '';
     state.selections[name] = state.selections[name] || [];
+
     options.forEach(opt => {
+      let label, isRestricted = false;
+
+      if (typeof opt === 'string') {
+        label = opt;
+      } else {
+        // Objet avec restriction
+        label = opt.nom;
+        const restriction = opt.restriction;
+
+        // Vérifier si le contexte permet d'afficher
+        if (restriction.peuple && context.peuple !== restriction.peuple) {
+          return; // Skip — peuple ne match pas
+        }
+        if (restriction.race && context.race !== restriction.race) {
+          return;
+        }
+        isRestricted = true;
+      }
+
       const chip = document.createElement('div');
-      chip.className = 'chip';
-      chip.textContent = opt;
-      chip.dataset.value = opt;
+      chip.className = 'chip' + (isRestricted ? ' restriction' : '');
+      chip.textContent = label;
+      chip.dataset.value = label;
       chip.onclick = () => toggleChip(chip, name);
+
+      // Restaurer sélection si déjà choisi
+      if (state.selections[name].includes(label)) {
+        chip.classList.add('selected');
+      }
+
       container.appendChild(chip);
     });
   });
@@ -1078,15 +1536,139 @@ function toggleChip(chip, name) {
   if (!state.selections[name]) state.selections[name] = [];
 
   if (chip.classList.contains('selected')) {
+    // Déselectionner — toujours permis
     chip.classList.remove('selected');
     state.selections[name] = state.selections[name].filter(v => v !== value);
   } else {
+    // Avant de sélectionner, vérifier la limite (si applicable)
+    if (!canSelectChip(name)) {
+      return; // bloqué — limite atteinte
+    }
     if (!isMulti) {
       chip.parentElement.querySelectorAll('.chip.selected').forEach(c => c.classList.remove('selected'));
       state.selections[name] = [];
     }
     chip.classList.add('selected');
     state.selections[name].push(value);
+  }
+
+  // Après chaque toggle, mettre à jour les compteurs et l'état des chips
+  updateLimitsUI();
+}
+
+/**
+ * Vérifie si on peut sélectionner un chip de plus dans la catégorie `name`.
+ * Retourne true si autorisé, false si limite atteinte.
+ */
+function canSelectChip(name) {
+  const classe = document.getElementById('classe_base') ? document.getElementById('classe_base').value : '';
+  const lunes = document.getElementById('lunes') ? parseInt(document.getElementById('lunes').value) || 0 : 0;
+  const limits = DATA.getLimits(classe, lunes);
+  if (!limits) return true; // pas de limite définie
+
+  // Cas spécial : guerrier — limite individuelle sur habiletes_guerrier
+  if (name === 'habiletes_guerrier' && limits.habiletes !== undefined) {
+    const current = (state.selections[name] || []).length;
+    return current < limits.habiletes;
+  }
+
+  // Pour mage et prêtre : on utilise UNIQUEMENT la limite globale
+  // (le scénariste peut choisir n'importe quelle combinaison faibles/intermédiaires/majeurs)
+  const isMageSpell = ['sorts_mage_faibles', 'sorts_mage_intermediaires', 'sorts_mage_majeurs'].includes(name);
+  const isPretreSpell = ['sorts_pretre_faibles', 'sorts_pretre_intermediaires', 'sorts_pretre_majeurs'].includes(name);
+
+  if ((isMageSpell || isPretreSpell) && limits.global !== undefined) {
+    // Calculer le total actuel (toutes catégories de sorts confondues)
+    const prefix = isMageSpell ? 'sorts_mage_' : 'sorts_pretre_';
+    const totalCurrent =
+      (state.selections[prefix + 'faibles'] || []).length +
+      (state.selections[prefix + 'intermediaires'] || []).length +
+      (state.selections[prefix + 'majeurs'] || []).length;
+    return totalCurrent < limits.global;
+  }
+
+  return true;
+}
+
+/**
+ * Met à jour les compteurs visibles et grise les chips non-sélectionnables
+ * quand la limite est atteinte.
+ */
+function updateLimitsUI() {
+  const classe = document.getElementById('classe_base') ? document.getElementById('classe_base').value : '';
+  const lunes = document.getElementById('lunes') ? parseInt(document.getElementById('lunes').value) || 0 : 0;
+  const limits = DATA.getLimits(classe, lunes);
+  if (!limits) return;
+
+  // === GUERRIER === (limite individuelle)
+  if (classe === 'Guerrier' && limits.habiletes !== undefined) {
+    const current = (state.selections['habiletes_guerrier'] || []).length;
+    const max = limits.habiletes;
+    const isFull = current >= max;
+
+    const counter = document.getElementById('cnt-habiletes');
+    if (counter) {
+      counter.querySelector('.count').textContent = `${current} / ${max}`;
+      counter.classList.toggle('full', isFull);
+    }
+
+    document.querySelectorAll(`.chips[data-name="habiletes_guerrier"] .chip`).forEach(chip => {
+      if (chip.classList.contains('selected')) {
+        chip.classList.remove('disabled');
+      } else if (isFull) {
+        chip.classList.add('disabled');
+      } else {
+        chip.classList.remove('disabled');
+      }
+    });
+    return;
+  }
+
+  // === MAGE / PRÊTRE === (limite globale uniquement)
+  if (classe === 'Mage' || classe === 'Prêtre') {
+    const prefix = classe === 'Mage' ? 'sorts_mage_' : 'sorts_pretre_';
+    const cFaibles = (state.selections[prefix + 'faibles'] || []).length;
+    const cInter = (state.selections[prefix + 'intermediaires'] || []).length;
+    const cMajeurs = (state.selections[prefix + 'majeurs'] || []).length;
+    const totalCurrent = cFaibles + cInter + cMajeurs;
+    const totalMax = limits.global;
+    const isFull = totalCurrent >= totalMax;
+
+    // Compteur global (avec état "full" pour le blocage)
+    const globalEl = document.getElementById('cnt-global');
+    if (globalEl) {
+      globalEl.querySelector('.global-count').textContent = totalCurrent;
+      globalEl.querySelector('.global-max').textContent = totalMax;
+      globalEl.classList.toggle('full', isFull);
+    }
+
+    // Compteurs informatifs par sous-niveau (juste pour info, pas de blocage)
+    const subCounters = [
+      {id: classe === 'Mage' ? 'cnt-mage-faibles' : 'cnt-pretre-faibles', count: cFaibles},
+      {id: classe === 'Mage' ? 'cnt-mage-inter' : 'cnt-pretre-inter', count: cInter},
+      {id: classe === 'Mage' ? 'cnt-mage-majeurs' : 'cnt-pretre-majeurs', count: cMajeurs}
+    ];
+    subCounters.forEach(sc => {
+      const el = document.getElementById(sc.id);
+      if (el) {
+        el.querySelector('.count').textContent = `${sc.count} sélectionné${sc.count > 1 ? 's' : ''}`;
+        el.classList.remove('full');
+      }
+    });
+
+    // Blocage : tous les chips non sélectionnés sont grisés si on a atteint le total global
+    const allCategories = [prefix + 'faibles', prefix + 'intermediaires', prefix + 'majeurs'];
+    allCategories.forEach(catName => {
+      document.querySelectorAll(`.chips[data-name="${catName}"] .chip`).forEach(chip => {
+        if (chip.classList.contains('selected')) {
+          chip.classList.remove('disabled');
+        } else if (isFull) {
+          chip.classList.add('disabled');
+        } else {
+          chip.classList.remove('disabled');
+        }
+      });
+    });
   }
 }
 
@@ -1095,7 +1677,7 @@ function addCustomChip(btn, name) {
   const value = input.value.trim();
   if (!value) return;
 
-  const container = document.querySelector(`.chips[data-name="${name}"]`);
+  const container = btn.closest('.field').querySelector(`.chips[data-name="${name}"]`);
   if (!container) return;
 
   const existing = Array.from(container.querySelectorAll('.chip')).map(c => c.dataset.value.toLowerCase());
@@ -1123,16 +1705,427 @@ function addCustomChip(btn, name) {
   input.value = '';
 }
 
-function updateClasseHint() {
-  const classe = document.getElementById('classe_base').value;
-  const hint = document.getElementById('hint_classe');
-  const hints = {
-    'Guerrier': 'Habiletés Guerrières par lune (max selon niveau) : +2 pv base, Résistance flèche (max 2), Immunité frayeur, Combat à l\'aveugle, Intimidation, +3 PA torse, Bris de bouclier, Désarçonner, Poigne de fer…',
-    'Mage': 'Sorts par lune : L1 = Faible + Détection magie, L3 = Faible, L6 = Intermédiaire, L10 = Intermédiaire, L15 = Majeur, L16 = test',
-    'Prêtre': 'Sorts par lune : L1 = Faible divin + Détection bien/mal, L3 = Faible divin, L6 = Intermédiaire, L10 = Intermédiaire + (Vade Rétro / Antée Rétro / Contrôle morts-vivants), L15 = Majeur'
-  };
-  hint.textContent = hints[classe] || 'Selon la lune, choisis les habiletés/sorts appropriés (lune 1, 3, 6, 10, 15, 16).';
+function toggleSection(header) {
+  header.parentElement.classList.toggle('collapsed');
 }
+
+/* ============================================================
+   PROGRESSION DYNAMIQUE
+   ============================================================ */
+
+function updateProgression() {
+  const classe = document.getElementById('classe_base').value;
+  const lunesInput = document.getElementById('lunes').value;
+  const lunes = parseInt(lunesInput) || 0;
+  const peuple = document.getElementById('peuple').value;
+  const race = document.getElementById('race').value;
+
+  const progDiv = document.getElementById('progression');
+  const capDiv = document.getElementById('capacitesContainer');
+
+  if (!classe) {
+    progDiv.innerHTML = '';
+    capDiv.innerHTML = '<div class="class-prompt">Sélectionne d\'abord une <strong style="color:var(--gold-bright)">classe de base</strong> et des <strong style="color:var(--gold-bright)">lunes</strong> à la section précédente.</div>';
+    return;
+  }
+
+  const prog = DATA.progression[classe] || [];
+
+  // Affichage progression
+  let progHtml = `
+    <div class="progression-box">
+      <div class="progression-title">⚡ Progression débloquée</div>
+      <ul class="progression-list">
+  `;
+
+  let unlockedSteps = 0;
+  prog.forEach(step => {
+    const unlocked = lunes >= step.lune;
+    if (unlocked) unlockedSteps++;
+    progHtml += `
+      <li class="${unlocked ? 'unlocked' : 'locked'}">
+        <span class="lune-badge">L ${step.lune}</span>
+        <span>${step.gain}</span>
+      </li>
+    `;
+  });
+
+  progHtml += `</ul></div>`;
+  progDiv.innerHTML = progHtml;
+
+  // Section capacités
+  renderCapacites(classe, lunes, unlockedSteps, peuple, race);
+}
+
+function renderCapacites(classe, lunes, unlockedSteps, peuple, race) {
+  const capDiv = document.getElementById('capacitesContainer');
+
+  if (classe === 'Guerrier') {
+    renderGuerrier(capDiv, lunes, unlockedSteps);
+  } else if (classe === 'Mage') {
+    renderMage(capDiv, lunes, peuple, race);
+  } else if (classe === 'Prêtre') {
+    renderPretre(capDiv, lunes, race);
+  } else if (classe === 'Fée' || classe === 'Ogre' || classe === 'Skaven') {
+    renderRaciale(capDiv, classe, lunes);
+  } else {
+    capDiv.innerHTML = '<div class="class-prompt">Classe non reconnue.</div>';
+  }
+}
+
+function renderGuerrier(capDiv, lunes, unlockedSteps) {
+  const limits = DATA.getLimits('Guerrier', lunes);
+  const max = limits ? limits.habiletes : 0;
+
+  let html = `
+    <div class="limit-global" id="cnt-habiletes">
+      <span class="label">Habiletés guerrières :</span>
+      <strong><span class="count">0 / ${max}</span></strong>
+    </div>
+    <div class="field">
+      <label class="field-label">Habiletés guerrières</label>
+      <div class="chips" data-name="habiletes_guerrier" data-multi="true"></div>
+      <div class="chip-input">
+        <input type="text" placeholder="Autre habileté…">
+        <button type="button" onclick="addCustomChip(this, 'habiletes_guerrier')">+ Ajouter</button>
+      </div>
+    </div>
+  `;
+  capDiv.innerHTML = html;
+  fillChips('habiletes_guerrier', DATA.habiletes_guerrier);
+  updateLimitsUI();
+}
+
+function renderMage(capDiv, lunes, peuple, race) {
+  // Filtrage strict par lune
+  const showFaibles = lunes >= 1;
+  const showInter = lunes >= 6;
+  const showMajeurs = lunes >= 15;
+
+  if (!showFaibles) {
+    capDiv.innerHTML = '<div class="class-prompt">Indique au moins <strong style="color:var(--gold-bright)">1 lune</strong> pour voir les sorts disponibles.</div>';
+    return;
+  }
+
+  // Avertissement Orque Vert ne peut être Mage
+  let warning = '';
+  if (race === 'Orque Vert') {
+    warning = `<div class="info-banner" style="border-left-color:var(--crimson-bright); background:rgba(168,50,50,0.12);">
+      ⚠ <strong>Attention</strong> : selon le Livre des Règles, un <strong>Orque Vert ne peut pas être Mage</strong>.
+    </div>`;
+  }
+
+  const limits = DATA.getLimits('Mage', lunes);
+
+  let html = warning;
+  html += `<div class="info-banner">Sorts affichés selon les lunes débloquées${peuple ? ' et le peuple <strong>' + peuple + '</strong>' : ''}. Le nombre maximum de sorts choisissables est limité selon la lune.</div>`;
+
+  // Compteur global
+  html += `
+    <div class="limit-global" id="cnt-global">
+      Total sorts choisis : <strong><span class="global-count">0</span> / <span class="global-max">${limits.global}</span></strong>
+    </div>
+  `;
+
+  // SORTS FAIBLES (lune 1+)
+  html += `
+    <div class="spell-group">
+      <div class="spell-group-label">Sorts Faibles (lune 1+)</div>
+      <div class="limit-counter" id="cnt-mage-faibles">
+        <span class="label">Faibles</span>
+        <span class="count">0 sélectionné</span>
+      </div>
+      <div class="chips" data-name="sorts_mage_faibles" data-multi="true"></div>
+    </div>
+  `;
+
+  // SORTS INTERMÉDIAIRES (lune 6+)
+  if (showInter) {
+    html += `
+      <div class="spell-group">
+        <div class="spell-group-label">Sorts Intermédiaires (lune 6+)</div>
+        <div class="limit-counter" id="cnt-mage-inter">
+          <span class="label">Intermédiaires</span>
+          <span class="count">0 sélectionné</span>
+        </div>
+        <div class="chips" data-name="sorts_mage_intermediaires" data-multi="true"></div>
+      </div>
+    `;
+  }
+
+  // SORTS MAJEURS (lune 15+)
+  if (showMajeurs) {
+    html += `
+      <div class="spell-group">
+        <div class="spell-group-label">Sorts Majeurs (lune 15+) ★ = restriction de peuple</div>
+        <div class="limit-counter" id="cnt-mage-majeurs">
+          <span class="label">Majeurs</span>
+          <span class="count">0 sélectionné</span>
+        </div>
+        <div class="chips" data-name="sorts_mage_majeurs" data-multi="true"></div>
+      </div>
+    `;
+  }
+
+  html += `
+    <div class="field" style="margin-top:0.8rem;">
+      <label class="field-label">Sorts personnalisés / parchemins</label>
+      <textarea name="sorts_mage_autres" rows="2" placeholder="Sorts hors liste, parchemins, restrictions spéciales…"></textarea>
+    </div>
+  `;
+  capDiv.innerHTML = html;
+
+  // Remplir les chips avec contexte (pour filtrer les sorts à restriction)
+  const context = { peuple: peuple, race: race };
+  fillChips('sorts_mage_faibles', DATA.sorts_mage_faibles, context);
+  if (showInter) fillChips('sorts_mage_intermediaires', DATA.sorts_mage_intermediaires, context);
+  if (showMajeurs) fillChips('sorts_mage_majeurs', DATA.sorts_mage_majeurs, context);
+
+  updateLimitsUI();
+}
+
+function renderPretre(capDiv, lunes, race) {
+  const showVade = lunes >= 10;
+
+  // Déterminer les divinités accessibles selon la race
+  let divinitesAccessibles;
+  let infoRaceDivinite = '';
+
+  if (!race) {
+    // Aucune race choisie : avertissement
+    capDiv.innerHTML = `
+      <div class="info-banner" style="border-left-color:var(--crimson-bright); background:rgba(168,50,50,0.12);">
+        ⚠ <strong>Sélectionne d'abord une race</strong> à la section Identité pour voir les divinités accessibles à ce prêtre.
+      </div>
+    `;
+    return;
+  }
+
+  const raceDivinites = DATA.divinites_par_race[race];
+
+  if (raceDivinites === null || raceDivinites === undefined) {
+    // null = toutes les divinités (Humain, Demi-race, Autre)
+    divinitesAccessibles = DATA.divinites_pretre;
+    infoRaceDivinite = `<strong>${race}</strong> peut adorer toutes les divinités.`;
+  } else {
+    divinitesAccessibles = raceDivinites;
+    infoRaceDivinite = `Divinités accessibles aux <strong>${race}</strong> : ${raceDivinites.length} divinité${raceDivinites.length > 1 ? 's' : ''}.`;
+  }
+
+  let html = `
+    <div class="info-banner">${infoRaceDivinite}</div>
+
+    <div class="field" style="margin-bottom:1rem;">
+      <label class="field-label">Divinité</label>
+      <select name="divinite_pretre" id="divinitePretre" onchange="updatePretreSorts()"></select>
+    </div>
+
+    <div id="pretreSortsContainer">
+      <div class="class-prompt">Sélectionne une <strong style="color:var(--gold-bright)">divinité</strong> pour voir les sorts disponibles.</div>
+    </div>
+  `;
+
+  if (showVade) {
+    html += `
+      <div class="field" style="margin-top:1rem;">
+        <label class="field-label">Bonus L10 — Choix unique</label>
+        <div class="chips" data-name="bonus_l10" data-multi="false"></div>
+      </div>
+    `;
+  }
+
+  html += `
+    <div class="field" style="margin-top:0.8rem;">
+      <label class="field-label">Sorts personnalisés / parchemins</label>
+      <textarea name="sorts_pretre_autres" rows="2" placeholder="Sorts hors liste, parchemins, restrictions spéciales…"></textarea>
+    </div>
+  `;
+  capDiv.innerHTML = html;
+
+  fillSelect('divinitePretre', divinitesAccessibles, true);
+
+  if (showVade) {
+    fillChips('bonus_l10', ['Vade Rétro', 'Antée Rétro', 'Contrôle des morts-vivants']);
+  }
+}
+
+function updatePretreSorts() {
+  const div = document.getElementById('divinitePretre').value;
+  const container = document.getElementById('pretreSortsContainer');
+
+  if (!div) {
+    container.innerHTML = '<div class="class-prompt">Sélectionne une <strong style="color:var(--gold-bright)">divinité</strong> pour voir les sorts disponibles.</div>';
+    return;
+  }
+
+  const sortsDivinite = DATA.sorts_pretre_par_divinite[div] || [];
+  const lunes = parseInt(document.getElementById('lunes').value) || 0;
+  const peuple = document.getElementById('peuple').value;
+
+  // Filtres par niveau selon les lunes
+  const showFaibles = lunes >= 1;
+  const showInter = lunes >= 6;
+  const showMajeurs = lunes >= 15;
+
+  // Helper : récupère le nom d'un sort (string ou objet avec restriction)
+  function getNomSort(s) { return typeof s === 'string' ? s : s.nom; }
+
+  // Helper : vérifie si un sort de la liste majeurs est accessible selon le peuple
+  function checkRestriction(sortObj, peuple) {
+    if (typeof sortObj === 'string') return true;
+    if (sortObj.restriction && sortObj.restriction.peuple) {
+      return peuple === sortObj.restriction.peuple;
+    }
+    return true;
+  }
+
+  // Normaliser : enlever accents, casse, espaces pour comparaisons fiables
+  function normalize(s) {
+    return s.toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // enlève accents
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  // Construire des Sets normalisés pour matcher rapidement
+  const divNorm = new Set(sortsDivinite.map(normalize));
+
+  // Filtrer chaque niveau : garder seulement les sorts qui sont DANS la liste de la divinité
+  const matchedFaibles = DATA.sorts_pretre_niveaux.faibles
+    .filter(s => divNorm.has(normalize(getNomSort(s))));
+
+  const matchedIntermediaires = DATA.sorts_pretre_niveaux.intermediaires
+    .filter(s => divNorm.has(normalize(getNomSort(s))));
+
+  const matchedMajeurs = DATA.sorts_pretre_niveaux.majeurs
+    .filter(s => divNorm.has(normalize(getNomSort(s))) && checkRestriction(s, peuple));
+
+  // Sorts de la divinité qui ne sont dans aucune liste de niveau (sorts spéciaux des Kamis, Seth, Oz, etc.)
+  const allNiveauxNorm = new Set([
+    ...DATA.sorts_pretre_niveaux.faibles.map(s => normalize(getNomSort(s))),
+    ...DATA.sorts_pretre_niveaux.intermediaires.map(s => normalize(getNomSort(s))),
+    ...DATA.sorts_pretre_niveaux.majeurs.map(s => normalize(getNomSort(s)))
+  ]);
+  const sortsSpeciaux = sortsDivinite.filter(s => !allNiveauxNorm.has(normalize(s)));
+
+  let html = `<div class="info-banner">Sorts du panthéon de <strong>${div}</strong> filtrés par niveau selon les lunes (${lunes || 0}).</div>`;
+
+  // Compteur global
+  const limits = DATA.getLimits('Prêtre', lunes);
+  if (limits) {
+    html += `
+      <div class="limit-global" id="cnt-global">
+        Total sorts choisis : <strong><span class="global-count">0</span> / <span class="global-max">${limits.global}</span></strong>
+      </div>
+    `;
+  }
+
+  // SORTS FAIBLES
+  if (showFaibles && matchedFaibles.length > 0) {
+    html += `
+      <div class="spell-group">
+        <div class="spell-group-label">Sorts Faibles (lune 1+)</div>
+        <div class="limit-counter" id="cnt-pretre-faibles">
+          <span class="label">Faibles</span>
+          <span class="count">0 sélectionné</span>
+        </div>
+        <div class="chips" data-name="sorts_pretre_faibles" data-multi="true"></div>
+      </div>
+    `;
+  }
+
+  // SORTS INTERMÉDIAIRES
+  if (showInter && matchedIntermediaires.length > 0) {
+    html += `
+      <div class="spell-group">
+        <div class="spell-group-label">Sorts Intermédiaires (lune 6+)</div>
+        <div class="limit-counter" id="cnt-pretre-inter">
+          <span class="label">Intermédiaires</span>
+          <span class="count">0 sélectionné</span>
+        </div>
+        <div class="chips" data-name="sorts_pretre_intermediaires" data-multi="true"></div>
+      </div>
+    `;
+  }
+
+  // SORTS MAJEURS
+  if (showMajeurs && matchedMajeurs.length > 0) {
+    html += `
+      <div class="spell-group">
+        <div class="spell-group-label">Sorts Majeurs (lune 15+) ★ = restriction de peuple</div>
+        <div class="limit-counter" id="cnt-pretre-majeurs">
+          <span class="label">Majeurs</span>
+          <span class="count">0 sélectionné</span>
+        </div>
+        <div class="chips" data-name="sorts_pretre_majeurs" data-multi="true"></div>
+      </div>
+    `;
+  }
+
+  // SORTS SPÉCIAUX (Kamis, Seth, Oz...)
+  if (sortsSpeciaux.length > 0) {
+    html += `
+      <div class="spell-group">
+        <div class="spell-group-label">Sorts spéciaux / À définir avec animation</div>
+        <div class="chips" data-name="sorts_pretre_speciaux" data-multi="true"></div>
+      </div>
+    `;
+  }
+
+  // Si aucun sort n'est disponible (cas rare)
+  if (!showFaibles) {
+    html += `<div class="class-prompt">Indique au moins <strong style="color:var(--gold-bright)">1 lune</strong> pour voir les sorts disponibles.</div>`;
+  } else if (matchedFaibles.length === 0 && matchedIntermediaires.length === 0 && matchedMajeurs.length === 0 && sortsSpeciaux.length === 0) {
+    html += `<div class="class-prompt">Aucun sort trouvé pour cette divinité. Utilise le champ libre ci-dessous.</div>`;
+  }
+
+  html += `
+    <div class="field" style="margin-top:0.8rem;">
+      <label class="field-label">Champ libre — Notes sur les sorts</label>
+      <textarea name="sorts_pretre_choisis" rows="2" placeholder="Sorts personnalisés ou notes…"></textarea>
+    </div>
+  `;
+
+  container.innerHTML = html;
+
+  // Reset selections
+  state.selections['sorts_pretre_faibles'] = [];
+  state.selections['sorts_pretre_intermediaires'] = [];
+  state.selections['sorts_pretre_majeurs'] = [];
+  state.selections['sorts_pretre_speciaux'] = [];
+
+  // Remplir les chips (avec contexte pour les majeurs qui ont des restrictions de peuple)
+  const context = { peuple: peuple };
+  if (showFaibles && matchedFaibles.length > 0) fillChips('sorts_pretre_faibles', matchedFaibles, context);
+  if (showInter && matchedIntermediaires.length > 0) fillChips('sorts_pretre_intermediaires', matchedIntermediaires, context);
+  if (showMajeurs && matchedMajeurs.length > 0) fillChips('sorts_pretre_majeurs', matchedMajeurs, context);
+  if (sortsSpeciaux.length > 0) fillChips('sorts_pretre_speciaux', sortsSpeciaux);
+
+  updateLimitsUI();
+}
+
+function renderRaciale(capDiv, classe, lunes) {
+  let description = '';
+  if (classe === 'Fée') {
+    description = 'Pouvoirs de classe Fée gagnés à la 1<sup>e</sup>, 3<sup>e</sup>, 6<sup>e</sup>, 9<sup>e</sup> et 12<sup>e</sup> lune. Voir le Livre des Règles ou l\'animation pour les détails spécifiques (poudre de fée, etc.).';
+  } else if (classe === 'Ogre') {
+    description = 'Pouvoir <strong>Faim de l\'Ogre</strong> : +1 PV à la 3<sup>e</sup> lune (1 corps dévoré), +2 PV à la 9<sup>e</sup> lune (2 corps), et progressivement jusqu\'à +5 PV. <strong>Guerrier Dévoré</strong> : peut assimiler les habiletés guerrières d\'un ogre dévoré.';
+  } else if (classe === 'Skaven') {
+    description = 'Classe prestige unique aux Ratkins. <strong>Aura de courage</strong> en groupe de 3+ individus. Pouvoirs spécifiques voir animation/Livre des Règles.';
+  }
+
+  capDiv.innerHTML = `
+    <div class="info-banner">${description}</div>
+    <div class="field" style="margin-top:0.8rem;">
+      <label class="field-label">Pouvoirs de classe (texte libre)</label>
+      <textarea name="pouvoirs_raciale" rows="4" placeholder="Détaille les pouvoirs spécifiques de ce ${classe.toLowerCase()}…"></textarea>
+    </div>
+  `;
+}
+
+/* ============================================================
+   ENREGISTREMENT
+   ============================================================ */
 
 function toggleSection(header) {
   header.parentElement.classList.toggle('collapsed');
@@ -1269,14 +2262,21 @@ function generateDocHtml(data) {
 
     <h3>8. Capacités</h3>
     <p><b>Classe de base :</b> ${esc(data.classe_base)}</p>
-    <p><b>Habiletés/Sorts de la classe de base :</b><br>${esc(data.habilites_base)}</p>
-    <p><b>Classe prestige :</b> ${esc(data.classe_prestige)}</p>
-    <p><b>Habiletés/Sorts de prestige :</b><br>${esc(data.habilites_prestige)}</p>
-    <p><b>Divinité :</b> ${esc(data.divinite)}</p>
-    <p><b>Sorts/Capacités spéciales :</b><br>${esc(data.capacites_speciales)}</p>
-    <p><b>Force surnaturelle :</b> ${esc(data.force)}</p>
-    <p><b>Points de vie :</b> ${esc(data.pv)}</p>
-    <p><b>Autres notes :</b><br>${esc(data.capacites_autre)}</p>
+    <p><b>Lunes :</b> ${esc(data.lunes)}</p>
+    ${data.classe_base === 'Guerrier' && data.habiletes_guerrier ? `<p><b>Habiletés guerrières :</b> ${esc(data.habiletes_guerrier)}</p>` : ''}
+    ${data.classe_base === 'Mage' && data.sorts_mage_faibles ? `<p><b>Sorts faibles (mage) :</b> ${esc(data.sorts_mage_faibles)}</p>` : ''}
+    ${data.classe_base === 'Mage' && data.sorts_mage_intermediaires ? `<p><b>Sorts intermédiaires (mage) :</b> ${esc(data.sorts_mage_intermediaires)}</p>` : ''}
+    ${data.classe_base === 'Mage' && data.sorts_mage_majeurs ? `<p><b>Sorts majeurs (mage) :</b> ${esc(data.sorts_mage_majeurs)}</p>` : ''}
+    ${data.classe_base === 'Mage' && data.sorts_mage_autres ? `<p><b>Sorts personnalisés (mage) :</b> ${esc(data.sorts_mage_autres)}</p>` : ''}
+    ${data.classe_base === 'Prêtre' && data.divinite_pretre ? `<p><b>Divinité :</b> ${esc(data.divinite_pretre)}</p>` : ''}
+    ${data.classe_base === 'Prêtre' && data.sorts_pretre_faibles ? `<p><b>Sorts faibles (prêtre) :</b> ${esc(data.sorts_pretre_faibles)}</p>` : ''}
+    ${data.classe_base === 'Prêtre' && data.sorts_pretre_intermediaires ? `<p><b>Sorts intermédiaires (prêtre) :</b> ${esc(data.sorts_pretre_intermediaires)}</p>` : ''}
+    ${data.classe_base === 'Prêtre' && data.sorts_pretre_majeurs ? `<p><b>Sorts majeurs (prêtre) :</b> ${esc(data.sorts_pretre_majeurs)}</p>` : ''}
+    ${data.classe_base === 'Prêtre' && data.sorts_pretre_speciaux ? `<p><b>Sorts spéciaux (prêtre) :</b> ${esc(data.sorts_pretre_speciaux)}</p>` : ''}
+    ${data.classe_base === 'Prêtre' && data.bonus_l10 ? `<p><b>Bonus L10 :</b> ${esc(data.bonus_l10)}</p>` : ''}
+    ${data.classe_base === 'Prêtre' && data.sorts_pretre_autres ? `<p><b>Sorts personnalisés (prêtre) :</b> ${esc(data.sorts_pretre_autres)}</p>` : ''}
+    ${['Fée', 'Ogre', 'Skaven'].includes(data.classe_base) && data.pouvoirs_raciale ? `<p><b>Pouvoirs de classe (${data.classe_base}) :</b> ${esc(data.pouvoirs_raciale)}</p>` : ''}
+    ${data.aptitudes_libre ? `<p><b>Aptitudes additionnelles :</b><br>${esc(data.aptitudes_libre)}</p>` : ''}
 
     <h3>9. Sortie de jeu</h3>
     <p><b>Quand quitter la scène :</b> ${esc(data.sortie)}</p>
@@ -1312,21 +2312,25 @@ function resetFormSilent() {
   const form = document.getElementById('form-pnj');
   form.reset();
   form.querySelectorAll('.chip.selected').forEach(c => c.classList.remove('selected'));
-  form.querySelectorAll('.chips').forEach(c => {
-    const name = c.dataset.name;
-    state.selections[name] = [];
-    if (DATA[name]) {
-      c.innerHTML = '';
-      DATA[name].forEach(opt => {
-        const chip = document.createElement('div');
-        chip.className = 'chip';
-        chip.textContent = opt;
-        chip.dataset.value = opt;
-        chip.onclick = () => toggleChip(chip, name);
-        c.appendChild(chip);
-      });
-    }
-  });
+
+  // Reset toutes les sélections
+  Object.keys(state.selections).forEach(k => { state.selections[k] = []; });
+
+  // Re-init les chips standards
+  fillChips('qualites', DATA.qualites);
+  fillChips('defauts', DATA.defauts);
+  fillChips('attitude', DATA.attitude);
+  fillChips('voix', DATA.voix);
+  fillChips('distance', DATA.distance);
+  fillChips('favorise', DATA.favorise);
+  fillChips('perte_controle', DATA.perte_controle);
+
+  // Reset le système dynamique (progression + capacités)
+  const progDiv = document.getElementById('progression');
+  const capDiv = document.getElementById('capacitesContainer');
+  if (progDiv) progDiv.innerHTML = '';
+  if (capDiv) capDiv.innerHTML = '<div class="class-prompt">Sélectionne d\'abord une <strong style="color:var(--gold-bright)">classe de base</strong> et des <strong style="color:var(--gold-bright)">lunes</strong>.</div>';
+
   form.querySelectorAll('.section').forEach((s, i) => {
     if (i > 0) s.classList.add('collapsed');
     else s.classList.remove('collapsed');
