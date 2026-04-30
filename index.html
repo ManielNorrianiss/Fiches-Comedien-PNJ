@@ -2190,23 +2190,28 @@ async function saveForm() {
 }
 
 async function sendToGoogleDrive(data) {
+  // On génère le HTML complet ici, et on l'inclut dans les données envoyées
+  // L'Apps Script va sauvegarder ce HTML directement comme fichier .html dans Drive
+  const fullHtml = generateDocHtml(data);
+  const payload = Object.assign({}, data, { _html: fullHtml });
+
   return fetch(GAS_URL, {
     method: 'POST',
     mode: 'no-cors',
     headers: {'Content-Type': 'text/plain;charset=utf-8'},
-    body: JSON.stringify(data)
+    body: JSON.stringify(payload)
   });
 }
 
 function downloadDocFallback(data) {
   const html = generateDocHtml(data);
-  const blob = new Blob(['\ufeff', html], {type: 'application/msword'});
+  const blob = new Blob([html], {type: 'text/html;charset=utf-8'});
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   // Nom de fichier propre : juste le nom du personnage (avec lune entre parenthèses si présente)
   const cleanName = (data.nom || 'Sans nom').replace(/[\\\/:*?"<>|]/g, '').trim() || 'Sans nom';
   const cleanLune = (data.lune || '').replace(/[\\\/:*?"<>|]/g, '').trim();
-  const filename = cleanName + (cleanLune ? ' (' + cleanLune + ')' : '') + '.doc';
+  const filename = cleanName + (cleanLune ? ' (' + cleanLune + ')' : '') + '.html';
   link.href = url;
   link.download = filename;
   link.click();
@@ -2214,91 +2219,563 @@ function downloadDocFallback(data) {
 }
 
 function generateDocHtml(data) {
-  const title = `Fiche Comédien — ${data.nom || 'Sans nom'}`;
-  const body = `
-    <h1 style="text-align:center;">Fiche Comédien (PNJ)</h1>
-    <p style="text-align:center;font-style:italic;">Objectif : donner au comédien une compréhension immédiate de son rôle sans surcharge.</p>
-    <hr>
+  const title = `${data.nom || 'Sans nom'} — Fiche PNJ`;
 
-    <h3>Métadonnées</h3>
-    <p><b>Scénariste :</b> ${esc(data.scenariste)}</p>
-    <p><b>Peuple du scénariste :</b> ${esc(data.peuple_scenariste)}</p>
-    <p><b>Lune :</b> ${esc(data.lune)}</p>
-    <p><b>Type de game :</b> ${esc(data.type_game)}</p>
+  // Helper qui génère un champ "label : valeur" avec data-attr pour l'édition
+  const f = (label, value, fieldKey, multiline) => {
+    if (!value || (typeof value === 'string' && value.trim() === '')) {
+      return `<div class="field"><span class="lbl">${label} :</span> <span class="val empty" data-field="${fieldKey || ''}" data-multiline="${multiline?'true':'false'}">—</span></div>`;
+    }
+    return `<div class="field"><span class="lbl">${label} :</span> <span class="val" data-field="${fieldKey || ''}" data-multiline="${multiline?'true':'false'}">${esc(value)}</span></div>`;
+  };
 
-    <h3>1. Identité</h3>
-    <p><b>Nom du personnage :</b> ${esc(data.nom)}</p>
-    <p><b>Race :</b> ${esc(data.race)}</p>
-    <p><b>Peuple / Faction :</b> ${esc(data.peuple)}</p>
-    <p><b>Rôle en jeu :</b> ${esc(data.role)}</p>
-    <p><b>Habituellement joué par :</b> ${esc(data.acteur_habituel)}</p>
+  // Section avec accordéon
+  const section = (num, title, content, isOpen) => {
+    return `
+    <section class="card${isOpen ? ' open' : ''}">
+      <header onclick="toggleCard(this)">
+        <span class="num">${num}</span>
+        <h2>${title}</h2>
+        <span class="chev">▼</span>
+      </header>
+      <div class="body">${content}</div>
+    </section>`;
+  };
 
-    <h3>2. Qui il est</h3>
-    <p><b>Qui est-il dans ce monde? </b>${esc(data.qui_il_est)}</p>
-    <p><b>Comment tu le vois? </b>${esc(data.vision)}</p>
-    <p><b>Qualités :</b> ${esc(data.qualites)}</p>
-    <p><b>Défauts :</b> ${esc(data.defauts)}</p>
-    <p><b>Histoire du personnage :</b><br>${esc(data.histoire)}</p>
+  // Construction du contenu de la section 8 (Capacités) selon la classe
+  let capacitesContent = '';
+  capacitesContent += f('Classe de base', data.classe_base, 'classe_base');
+  capacitesContent += f('Lunes', data.lunes, 'lunes');
+  if (data.classe_base === 'Guerrier' && data.habiletes_guerrier)
+    capacitesContent += f('Habiletés guerrières', data.habiletes_guerrier, 'habiletes_guerrier', true);
+  if (data.classe_base === 'Mage') {
+    if (data.sorts_mage_faibles) capacitesContent += f('Sorts faibles', data.sorts_mage_faibles, 'sorts_mage_faibles', true);
+    if (data.sorts_mage_intermediaires) capacitesContent += f('Sorts intermédiaires', data.sorts_mage_intermediaires, 'sorts_mage_intermediaires', true);
+    if (data.sorts_mage_majeurs) capacitesContent += f('Sorts majeurs', data.sorts_mage_majeurs, 'sorts_mage_majeurs', true);
+    if (data.sorts_mage_autres) capacitesContent += f('Sorts personnalisés', data.sorts_mage_autres, 'sorts_mage_autres', true);
+  }
+  if (data.classe_base === 'Prêtre') {
+    if (data.divinite_pretre) capacitesContent += f('Divinité', data.divinite_pretre, 'divinite_pretre');
+    if (data.sorts_pretre_faibles) capacitesContent += f('Sorts faibles', data.sorts_pretre_faibles, 'sorts_pretre_faibles', true);
+    if (data.sorts_pretre_intermediaires) capacitesContent += f('Sorts intermédiaires', data.sorts_pretre_intermediaires, 'sorts_pretre_intermediaires', true);
+    if (data.sorts_pretre_majeurs) capacitesContent += f('Sorts majeurs', data.sorts_pretre_majeurs, 'sorts_pretre_majeurs', true);
+    if (data.sorts_pretre_speciaux) capacitesContent += f('Sorts spéciaux', data.sorts_pretre_speciaux, 'sorts_pretre_speciaux', true);
+    if (data.bonus_l10) capacitesContent += f('Bonus L10', data.bonus_l10, 'bonus_l10');
+    if (data.sorts_pretre_autres) capacitesContent += f('Sorts personnalisés', data.sorts_pretre_autres, 'sorts_pretre_autres', true);
+  }
+  if (['Fée', 'Ogre', 'Skaven'].includes(data.classe_base) && data.pouvoirs_raciale)
+    capacitesContent += f(`Pouvoirs (${data.classe_base})`, data.pouvoirs_raciale, 'pouvoirs_raciale', true);
+  if (data.aptitudes_libre)
+    capacitesContent += f('Aptitudes additionnelles', data.aptitudes_libre, 'aptitudes_libre', true);
 
-    <h3>3. Ce qu'il veut</h3>
-    <p><b>Objectif principal :</b> ${esc(data.objectif_principal)}</p>
-    <p><b>Objectif secondaire :</b> ${esc(data.objectif_secondaire)}</p>
+  // Construction des sections (la 1 est ouverte par défaut)
+  const sectionsHtml = [
+    section('M', 'Métadonnées',
+      f('Scénariste', data.scenariste, 'scenariste') +
+      f('Peuple du scénariste', data.peuple_scenariste, 'peuple_scenariste') +
+      f('Lune', data.lune, 'lune') +
+      f('Type de game', data.type_game, 'type_game'),
+      false),
 
-    <h3>4. Comment l'incarner</h3>
-    <p><b>Attitude générale :</b> ${esc(data.attitude)}</p>
-    <p><b>Ton de voix :</b> ${esc(data.voix)}</p>
-    <p><b>Distance physique :</b> ${esc(data.distance)}</p>
-    <p><b>Accessoires :</b> ${esc(data.accessoires)}</p>
-    <p><b>Style vestimentaire :</b> ${esc(data.vetements)}</p>
+    section('1', 'Identité',
+      f('Nom du personnage', data.nom, 'nom') +
+      f('Race', data.race, 'race') +
+      f('Peuple / Faction', data.peuple, 'peuple') +
+      f('Rôle en jeu', data.role, 'role') +
+      f('Habituellement joué par', data.acteur_habituel, 'acteur_habituel'),
+      true),
 
-    <h3>5. Ce qu'il sait (et pas les joueurs)</h3>
-    <p><b>Informations importantes :</b><br>${esc(data.infos_secretes)}</p>
-    <p><b>Mensonges qu'il peut dire :</b><br>${esc(data.mensonges)}</p>
+    section('2', 'Qui il est',
+      f('Qui est-il dans ce monde', data.qui_il_est, 'qui_il_est', true) +
+      f('Comment tu le vois', data.vision, 'vision', true) +
+      f('Qualités', data.qualites, 'qualites') +
+      f('Défauts', data.defauts, 'defauts') +
+      f('Histoire du personnage', data.histoire, 'histoire', true),
+      false),
 
-    <h3>6. Lignes à ne pas franchir</h3>
-    <p><b>Actions interdites :</b> ${esc(data.actions_interdites)}</p>
-    <p><b>Sujets à éviter :</b> ${esc(data.sujets_eviter)}</p>
+    section('3', 'Ce qu\'il veut',
+      f('Objectif principal', data.objectif_principal, 'objectif_principal', true) +
+      f('Objectif secondaire', data.objectif_secondaire, 'objectif_secondaire', true),
+      false),
 
-    <h3>7. Si les joueurs font l'inattendu</h3>
-    <p><b>Il favorise :</b> ${esc(data.favorise)}</p>
-    <p><b>S'il perd le contrôle :</b> ${esc(data.perte_controle)}</p>
+    section('4', 'Comment l\'incarner',
+      f('Attitude générale', data.attitude, 'attitude') +
+      f('Ton de voix', data.voix, 'voix') +
+      f('Distance physique', data.distance, 'distance') +
+      f('Style vestimentaire', data.vetements, 'vetements', true) +
+      f('Accessoires', data.accessoires, 'accessoires', true),
+      false),
 
-    <h3>8. Capacités</h3>
-    <p><b>Classe de base :</b> ${esc(data.classe_base)}</p>
-    <p><b>Lunes :</b> ${esc(data.lunes)}</p>
-    ${data.classe_base === 'Guerrier' && data.habiletes_guerrier ? `<p><b>Habiletés guerrières :</b> ${esc(data.habiletes_guerrier)}</p>` : ''}
-    ${data.classe_base === 'Mage' && data.sorts_mage_faibles ? `<p><b>Sorts faibles (mage) :</b> ${esc(data.sorts_mage_faibles)}</p>` : ''}
-    ${data.classe_base === 'Mage' && data.sorts_mage_intermediaires ? `<p><b>Sorts intermédiaires (mage) :</b> ${esc(data.sorts_mage_intermediaires)}</p>` : ''}
-    ${data.classe_base === 'Mage' && data.sorts_mage_majeurs ? `<p><b>Sorts majeurs (mage) :</b> ${esc(data.sorts_mage_majeurs)}</p>` : ''}
-    ${data.classe_base === 'Mage' && data.sorts_mage_autres ? `<p><b>Sorts personnalisés (mage) :</b> ${esc(data.sorts_mage_autres)}</p>` : ''}
-    ${data.classe_base === 'Prêtre' && data.divinite_pretre ? `<p><b>Divinité :</b> ${esc(data.divinite_pretre)}</p>` : ''}
-    ${data.classe_base === 'Prêtre' && data.sorts_pretre_faibles ? `<p><b>Sorts faibles (prêtre) :</b> ${esc(data.sorts_pretre_faibles)}</p>` : ''}
-    ${data.classe_base === 'Prêtre' && data.sorts_pretre_intermediaires ? `<p><b>Sorts intermédiaires (prêtre) :</b> ${esc(data.sorts_pretre_intermediaires)}</p>` : ''}
-    ${data.classe_base === 'Prêtre' && data.sorts_pretre_majeurs ? `<p><b>Sorts majeurs (prêtre) :</b> ${esc(data.sorts_pretre_majeurs)}</p>` : ''}
-    ${data.classe_base === 'Prêtre' && data.sorts_pretre_speciaux ? `<p><b>Sorts spéciaux (prêtre) :</b> ${esc(data.sorts_pretre_speciaux)}</p>` : ''}
-    ${data.classe_base === 'Prêtre' && data.bonus_l10 ? `<p><b>Bonus L10 :</b> ${esc(data.bonus_l10)}</p>` : ''}
-    ${data.classe_base === 'Prêtre' && data.sorts_pretre_autres ? `<p><b>Sorts personnalisés (prêtre) :</b> ${esc(data.sorts_pretre_autres)}</p>` : ''}
-    ${['Fée', 'Ogre', 'Skaven'].includes(data.classe_base) && data.pouvoirs_raciale ? `<p><b>Pouvoirs de classe (${data.classe_base}) :</b> ${esc(data.pouvoirs_raciale)}</p>` : ''}
-    ${data.aptitudes_libre ? `<p><b>Aptitudes additionnelles :</b><br>${esc(data.aptitudes_libre)}</p>` : ''}
+    section('5', 'Ce qu\'il sait (et pas les joueurs)',
+      f('Informations importantes', data.infos_secretes, 'infos_secretes', true) +
+      f('Mensonges qu\'il peut dire', data.mensonges, 'mensonges', true),
+      false),
 
-    <h3>9. Sortie de jeu</h3>
-    <p><b>Quand quitter la scène :</b> ${esc(data.sortie)}</p>
-    <p><b>S'il meurt / échoue / est capturé :</b><br>${esc(data.echec)}</p>
+    section('6', 'Lignes à ne pas franchir',
+      f('Actions interdites', data.actions_interdites, 'actions_interdites', true) +
+      f('Sujets à éviter', data.sujets_eviter, 'sujets_eviter', true),
+      false),
 
-    <hr>
-    <p style="text-align:center;font-style:italic;"><b>Tu n'es pas là pour gagner. Tu es là pour provoquer des choix.</b></p>
-  `;
+    section('7', 'Si les joueurs font l\'inattendu',
+      f('Il favorise', data.favorise, 'favorise') +
+      f('S\'il perd le contrôle', data.perte_controle, 'perte_controle'),
+      false),
 
-  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${title}</title>
+    section('8', 'Capacités', capacitesContent, false),
+
+    section('9', 'Sortie de jeu',
+      f('Quand quitter la scène', data.sortie, 'sortie', true) +
+      f('S\'il meurt / échoue / est capturé', data.echec, 'echec', true),
+      false)
+  ].join('');
+
+  return `<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${esc(title)}</title>
+<link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-body { font-family: Cambria, Georgia, serif; max-width: 800px; margin: 2cm auto; line-height: 1.5; color: #1a0f08; }
-h1 { color: #6b1f1f; border-bottom: 2px solid #b8893a; padding-bottom: 0.5rem; }
-h3 { color: #8a6420; border-bottom: 1px solid #d4a754; padding-bottom: 0.2rem; margin-top: 1.5rem; }
-p { margin: 0.5rem 0; }
-hr { border: none; border-top: 1px solid #b8893a; margin: 1.5rem 0; }
-b { color: #6b1f1f; }
+:root {
+  --ink: #1a0f08;
+  --ink-soft: #2d1d12;
+  --parchment: #e8d9b8;
+  --parchment-light: #f4e9d0;
+  --parchment-dark: #c9b88f;
+  --gold: #b8893a;
+  --gold-bright: #d4a754;
+  --gold-deep: #8a6420;
+  --crimson: #6b1f1f;
+  --crimson-bright: #a83232;
+  --border: rgba(184, 137, 58, 0.35);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  background: var(--ink);
+  color: var(--parchment);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px;
+  line-height: 1.55;
+  min-height: 100vh;
+}
+body {
+  background:
+    radial-gradient(ellipse at top, rgba(184, 137, 58, 0.08), transparent 50%),
+    radial-gradient(ellipse at bottom, rgba(107, 31, 31, 0.06), transparent 60%),
+    var(--ink);
+  background-attachment: fixed;
+  padding-bottom: 4rem;
+}
+.container { max-width: 700px; margin: 0 auto; padding: 1.5rem 1rem; }
+
+/* HEADER */
+header.top {
+  text-align: center;
+  padding: 2rem 1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1.5rem;
+}
+.logo {
+  font-family: 'UnifrakturCook', cursive;
+  font-size: 2.5rem;
+  color: var(--gold-bright);
+  text-shadow: 0 2px 8px rgba(184, 137, 58, 0.3);
+  line-height: 1;
+}
+.subtitle {
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  color: var(--parchment-dark);
+  margin: 0.4rem 0 1.2rem;
+}
+.char-name {
+  font-family: 'Cinzel', serif;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--parchment-light);
+  letter-spacing: 0.05em;
+  margin-bottom: 0.3rem;
+}
+.char-info {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  color: var(--gold);
+  font-style: italic;
+}
+.ornament {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  margin: 1rem auto;
+  color: var(--gold);
+  max-width: 200px;
+}
+.ornament::before, .ornament::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold), transparent);
+}
+
+/* TOOLBAR */
+.toolbar {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 0.8rem 1rem;
+  background: rgba(45, 29, 18, 0.6);
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--border);
+}
+.btn {
+  padding: 0.6rem 1.1rem;
+  background: transparent;
+  color: var(--parchment-light);
+  border: 1px solid var(--gold);
+  border-radius: 3px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn:hover { background: rgba(184, 137, 58, 0.15); }
+.btn-primary {
+  background: linear-gradient(180deg, var(--gold), var(--gold-deep));
+  color: var(--ink);
+  border-color: var(--gold-bright);
+}
+.btn-danger {
+  border-color: var(--crimson-bright);
+  color: var(--crimson-bright);
+}
+.btn-danger:hover { background: rgba(168, 50, 50, 0.15); }
+
+/* CARDS (sections en accordéon) */
+.card {
+  margin-bottom: 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(45, 29, 18, 0.4), rgba(26, 15, 8, 0.6));
+}
+.card header {
+  padding: 0.9rem 1rem;
+  background: linear-gradient(90deg, rgba(184, 137, 58, 0.12), transparent);
+  border-bottom: 1px solid transparent;
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+.card.open header { border-bottom-color: var(--border); }
+.card .num {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gold-deep);
+  color: var(--parchment-light);
+  font-family: 'Cinzel', serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 50%;
+  border: 1px solid var(--gold-bright);
+  flex-shrink: 0;
+}
+.card h2 {
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--gold-bright);
+  flex: 1;
+}
+.card .chev {
+  color: var(--gold);
+  transition: transform 0.3s;
+  font-size: 0.8rem;
+}
+.card.open .chev { transform: rotate(180deg); }
+.card .body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, padding 0.3s;
+  padding: 0 1rem;
+}
+.card.open .body {
+  max-height: 5000px;
+  padding: 1rem;
+}
+
+/* CHAMPS */
+.field {
+  margin-bottom: 0.7rem;
+  padding: 0.5rem 0.6rem;
+  background: rgba(244, 233, 208, 0.03);
+  border-left: 2px solid var(--gold-deep);
+  border-radius: 0 3px 3px 0;
+}
+.field .lbl {
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--gold-bright);
+  display: block;
+  margin-bottom: 0.2rem;
+}
+.field .val {
+  color: var(--parchment-light);
+  font-size: 1rem;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  display: block;
+}
+.field .val.empty {
+  color: var(--parchment-dark);
+  font-style: italic;
+  opacity: 0.6;
+}
+
+/* MODE ÉDITION */
+body.editing .field .val {
+  background: rgba(184, 137, 58, 0.1);
+  border: 1px solid var(--gold);
+  border-radius: 3px;
+  padding: 0.4rem 0.6rem;
+  outline: none;
+}
+body.editing .field .val:focus {
+  background: rgba(184, 137, 58, 0.2);
+  border-color: var(--gold-bright);
+}
+body.editing .field .val.empty {
+  color: var(--parchment-light);
+  font-style: normal;
+  opacity: 1;
+}
+body.editing .field .val.empty:empty::before {
+  content: 'Cliquer pour remplir...';
+  color: var(--parchment-dark);
+  font-style: italic;
+}
+
+/* CITATION */
+.citation {
+  text-align: center;
+  margin: 2rem auto 1rem;
+  padding: 1.2rem;
+  font-style: italic;
+  color: var(--gold);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+/* MODE IMPRESSION (clair) */
+body.print-mode {
+  background: white !important;
+  color: #1a0f08;
+}
+body.print-mode .container { max-width: 800px; }
+body.print-mode header.top { border-bottom-color: #b8893a; }
+body.print-mode .logo { color: #6b1f1f; text-shadow: none; }
+body.print-mode .subtitle { color: #8a6420; }
+body.print-mode .char-name { color: #1a0f08; }
+body.print-mode .char-info { color: #8a6420; }
+body.print-mode .toolbar { background: #f4e9d0; border-color: #b8893a; }
+body.print-mode .btn { color: #6b1f1f; border-color: #b8893a; }
+body.print-mode .btn:hover { background: rgba(184, 137, 58, 0.1); }
+body.print-mode .btn-primary { background: #b8893a; color: white; }
+body.print-mode .card {
+  background: white !important;
+  border-color: #b8893a;
+}
+body.print-mode .card header {
+  background: #f4e9d0 !important;
+  border-bottom-color: #b8893a;
+}
+body.print-mode .card h2 { color: #6b1f1f; }
+body.print-mode .card.open .body { background: white; }
+body.print-mode .field {
+  background: #faf5e6;
+  border-left-color: #8a6420;
+}
+body.print-mode .field .lbl { color: #6b1f1f; }
+body.print-mode .field .val { color: #1a0f08; }
+body.print-mode .field .val.empty { color: #999; }
+body.print-mode .citation { color: #6b1f1f; border-color: #b8893a; }
+body.print-mode .ornament { color: #b8893a; }
+body.print-mode .ornament::before, body.print-mode .ornament::after {
+  background: linear-gradient(to right, transparent, #b8893a, transparent);
+}
+
+/* IMPRESSION RÉELLE */
+@media print {
+  .toolbar { display: none !important; }
+  .card .body { max-height: none !important; padding: 1rem !important; }
+  .card .chev { display: none; }
+  body { background: white !important; color: black !important; }
+}
+
+/* RESPONSIVE */
+@media (max-width: 480px) {
+  .logo { font-size: 2rem; }
+  .char-name { font-size: 1.3rem; }
+  .container { padding: 1rem 0.7rem; }
+  .toolbar { gap: 0.4rem; }
+  .btn { padding: 0.5rem 0.8rem; font-size: 0.7rem; }
+}
 </style>
-</head><body>${body}</body></html>`;
+</head>
+<body>
+
+<div class="container">
+
+  <header class="top">
+    <div class="logo">Fléau</div>
+    <div class="subtitle">Grandeur Nature</div>
+    <div class="ornament">✦</div>
+    <div class="char-name">${esc(data.nom || 'Sans nom')}</div>
+    <div class="char-info">${esc(data.race || '')}${data.race && data.peuple ? ' · ' : ''}${esc(data.peuple || '')}${data.role ? ' — ' + esc(data.role) : ''}</div>
+    <div class="ornament">✦</div>
+  </header>
+
+  <div class="toolbar">
+    <button class="btn btn-primary" id="editBtn" onclick="toggleEdit()">✎ Modifier</button>
+    <button class="btn" id="saveBtn" onclick="saveChanges()" style="display:none;">💾 Sauvegarder</button>
+    <button class="btn btn-danger" id="cancelBtn" onclick="cancelEdit()" style="display:none;">✗ Annuler</button>
+    <button class="btn" onclick="togglePrintMode()">🌓 Mode clair</button>
+    <button class="btn" onclick="window.print()">🖨 Imprimer</button>
+    <button class="btn" onclick="expandAll()">⊞ Tout déplier</button>
+    <button class="btn" onclick="collapseAll()">⊟ Tout replier</button>
+  </div>
+
+  ${sectionsHtml}
+
+  <div class="citation">
+    « Tu n'es pas là pour gagner. Tu es là pour provoquer des choix. »
+  </div>
+
+</div>
+
+<script>
+function toggleCard(headerEl) {
+  if (document.body.classList.contains('editing')) return;
+  headerEl.parentElement.classList.toggle('open');
+}
+
+function expandAll() {
+  document.querySelectorAll('.card').forEach(c => c.classList.add('open'));
+}
+
+function collapseAll() {
+  document.querySelectorAll('.card').forEach(c => c.classList.remove('open'));
+}
+
+function togglePrintMode() {
+  document.body.classList.toggle('print-mode');
+}
+
+let originalContent = {};
+
+function toggleEdit() {
+  document.body.classList.add('editing');
+  document.querySelectorAll('.card').forEach(c => c.classList.add('open'));
+
+  // Sauvegarder le contenu original au cas où on annule
+  document.querySelectorAll('.field .val').forEach(el => {
+    const field = el.dataset.field;
+    if (field) originalContent[field] = el.innerHTML;
+    el.contentEditable = 'true';
+    if (el.classList.contains('empty')) {
+      el.textContent = '';
+      el.dataset.wasEmpty = 'true';
+    }
+  });
+
+  document.getElementById('editBtn').style.display = 'none';
+  document.getElementById('saveBtn').style.display = '';
+  document.getElementById('cancelBtn').style.display = '';
+}
+
+function cancelEdit() {
+  // Restaurer le contenu original
+  document.querySelectorAll('.field .val').forEach(el => {
+    const field = el.dataset.field;
+    if (field && originalContent[field] !== undefined) {
+      el.innerHTML = originalContent[field];
+      if (el.dataset.wasEmpty === 'true') {
+        el.classList.add('empty');
+        delete el.dataset.wasEmpty;
+      }
+    }
+    el.contentEditable = 'false';
+  });
+
+  document.body.classList.remove('editing');
+  document.getElementById('editBtn').style.display = '';
+  document.getElementById('saveBtn').style.display = 'none';
+  document.getElementById('cancelBtn').style.display = 'none';
+}
+
+function saveChanges() {
+  // Mettre à jour les états (vide ou rempli)
+  document.querySelectorAll('.field .val').forEach(el => {
+    const text = el.textContent.trim();
+    if (text === '' || text === '—') {
+      el.classList.add('empty');
+      el.innerHTML = '—';
+    } else {
+      el.classList.remove('empty');
+    }
+    el.contentEditable = 'false';
+    delete el.dataset.wasEmpty;
+  });
+
+  document.body.classList.remove('editing');
+  document.getElementById('editBtn').style.display = '';
+  document.getElementById('saveBtn').style.display = 'none';
+  document.getElementById('cancelBtn').style.display = 'none';
+
+  // Télécharger la nouvelle version
+  downloadModifiedFile();
+}
+
+function downloadModifiedFile() {
+  // Sérialiser tout le HTML actuel
+  const html = '<!DOCTYPE html>\\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type: 'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  // Récupérer le nom du personnage pour le nom de fichier
+  const nameEl = document.querySelector('.char-name');
+  const charName = nameEl ? nameEl.textContent.trim() : 'Personnage';
+  const cleanName = charName.replace(/[\\\\\\/:*?"<>|]/g, '').trim() || 'Personnage';
+  a.href = url;
+  a.download = cleanName + '.html';
+  a.click();
+  URL.revokeObjectURL(url);
+  alert('La fiche modifiée a été téléchargée. Tu peux la remplacer dans ton Drive.');
+}
+<\/script>
+
+</body>
+</html>`;
 }
 
 function esc(str) {
