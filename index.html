@@ -1420,7 +1420,7 @@ const PEUPLES_SCENARISTE = ['Pandor', 'Lossado', 'Eldoriath', 'Numénor', 'Moriq
   'Peuple des Sables', 'Nazzakri', 'Orques', 'Elfes Noirs', 'Oz', 'Khazad', 'Autre'];
 
 const state = { selections: {} };
-let GAS_URL = '';
+let GAS_URL = 'https://script.google.com/macros/s/AKfycbx7CBRqKAeKRvu_iCUPmy0O_oBqM_6WUgHL40ASlpdAMZs1ZEq8y_l-aNxYOHVR3WB2NQ/exec';
 
 function init() {
   fillSelect('race', DATA.races, true);
@@ -2203,7 +2203,10 @@ function downloadDocFallback(data) {
   const blob = new Blob(['\ufeff', html], {type: 'application/msword'});
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
-  const filename = `Fiche-PNJ_${(data.nom || 'sans-nom').replace(/[^a-z0-9]/gi, '-')}_${Date.now()}.doc`;
+  // Nom de fichier propre : juste le nom du personnage (avec lune entre parenthèses si présente)
+  const cleanName = (data.nom || 'Sans nom').replace(/[\\\/:*?"<>|]/g, '').trim() || 'Sans nom';
+  const cleanLune = (data.lune || '').replace(/[\\\/:*?"<>|]/g, '').trim();
+  const filename = cleanName + (cleanLune ? ' (' + cleanLune + ')' : '') + '.doc';
   link.href = url;
   link.download = filename;
   link.click();
