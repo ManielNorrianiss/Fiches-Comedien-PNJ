@@ -47,7 +47,6 @@
 
   .container { max-width: 800px; margin: 0 auto; padding: 1.5rem 1rem; }
 
-  /* HEADER */
   header.top {
     text-align: center;
     padding: 2rem 1rem 1.5rem;
@@ -93,6 +92,7 @@
     cursor: pointer;
     color: var(--parchment-dark);
     transition: all 0.2s;
+    background: rgba(45, 29, 18, 0.6);
   }
   .login-status:hover { border-color: var(--gold); color: var(--gold-bright); }
   .login-status.scenariste {
@@ -101,7 +101,6 @@
     background: rgba(184, 137, 58, 0.1);
   }
 
-  /* TABS */
   .tabs {
     display: flex;
     gap: 0.4rem;
@@ -130,7 +129,36 @@
     color: var(--parchment-light);
   }
 
-  /* RECHERCHE */
+  /* BOUTONS DE CRÉATION (visibles scénaristes seulement) */
+  .creation-buttons {
+    display: none;
+    gap: 0.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+  .creation-buttons.show { display: flex; }
+  .btn-create {
+    padding: 0.6rem 1.1rem;
+    background: linear-gradient(180deg, var(--gold), var(--gold-deep));
+    border: 1px solid var(--gold-bright);
+    color: var(--ink);
+    font-family: 'Cinzel', serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: all 0.2s;
+  }
+  .btn-create:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(184, 137, 58, 0.3); }
+  .btn-create:active { transform: translateY(0); }
+
   .search-wrap {
     margin-bottom: 1rem;
     position: relative;
@@ -161,10 +189,9 @@
     opacity: 0.6;
   }
 
-  /* FILTRES */
   .filters {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     gap: 0.5rem;
     margin-bottom: 1rem;
     padding: 0.8rem;
@@ -215,7 +242,6 @@
   }
   .clear-filters button:hover { color: var(--gold); border-color: var(--gold); }
 
-  /* COMPTEUR */
   .count-banner {
     text-align: center;
     margin-bottom: 1rem;
@@ -226,7 +252,6 @@
     letter-spacing: 0.15em;
   }
 
-  /* LISTE DES FICHES */
   .fiches-list {
     display: flex;
     flex-direction: column;
@@ -239,12 +264,11 @@
     border-left: 3px solid var(--gold);
     border-radius: 4px;
     padding: 0.9rem 1rem;
-    cursor: pointer;
     transition: all 0.2s;
     display: grid;
     grid-template-columns: 1fr auto;
     gap: 0.8rem;
-    align-items: center;
+    align-items: start;
   }
   .fiche-card:hover {
     border-color: var(--gold-bright);
@@ -253,7 +277,10 @@
   }
   .fiche-card.figurant { border-left-color: var(--gold-deep); }
 
-  .fiche-info { min-width: 0; }
+  .fiche-info {
+    min-width: 0;
+    cursor: pointer;
+  }
   .fiche-name {
     font-family: 'Cinzel', serif;
     font-size: 1rem;
@@ -277,6 +304,12 @@
     margin-top: 0.2rem;
   }
 
+  .fiche-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    align-items: flex-end;
+  }
   .fiche-type-badge {
     font-family: 'Cinzel', serif;
     font-size: 0.65rem;
@@ -288,15 +321,33 @@
     border: 1px solid var(--gold);
     color: var(--gold-bright);
     background: rgba(184, 137, 58, 0.1);
-    flex-shrink: 0;
-    align-self: flex-start;
   }
   .fiche-card.figurant .fiche-type-badge {
     border-color: var(--gold-deep);
     color: var(--gold);
   }
 
-  /* ETATS */
+  .btn-delete {
+    display: none;
+    padding: 0.3rem 0.7rem;
+    background: transparent;
+    border: 1px solid var(--crimson-bright);
+    color: var(--crimson-bright);
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .btn-delete:hover {
+    background: rgba(168, 50, 50, 0.15);
+  }
+  body.scenariste .btn-delete { display: inline-block; }
+
   .loading, .empty {
     text-align: center;
     padding: 3rem 1rem;
@@ -317,7 +368,6 @@
     60%, 100% { content: '...'; }
   }
 
-  /* MODAL */
   .modal-overlay {
     position: fixed;
     inset: 0;
@@ -345,6 +395,7 @@
     margin-bottom: 1rem;
     text-align: center;
   }
+  .modal h2.danger { color: var(--crimson-bright); }
   .modal p {
     font-size: 0.95rem;
     color: var(--parchment-light);
@@ -386,6 +437,11 @@
     color: var(--ink);
     border-color: var(--gold-bright);
   }
+  .modal-actions button.danger {
+    background: linear-gradient(180deg, var(--crimson-bright), var(--crimson));
+    color: var(--parchment-light);
+    border-color: var(--crimson-bright);
+  }
 
   .toast {
     position: fixed;
@@ -409,6 +465,7 @@
     transform: translateX(-50%) translateY(0.3rem);
   }
   .toast.error { border-color: var(--crimson-bright); color: var(--crimson-bright); }
+  .toast.success { border-color: var(--gold-bright); }
 
   @media (max-width: 480px) {
     .logo { font-size: 2rem; }
@@ -417,7 +474,7 @@
     .filters { grid-template-columns: 1fr 1fr; }
     .login-status { font-size: 0.65rem; padding: 0.3rem 0.6rem; }
     .fiche-card { grid-template-columns: 1fr; }
-    .fiche-type-badge { justify-self: start; }
+    .fiche-actions { flex-direction: row; align-items: center; flex-wrap: wrap; }
   }
 </style>
 </head>
@@ -440,26 +497,48 @@
     <button class="tab" data-type="Figurant" onclick="setTab('Figurant')">🛡 Figurants</button>
   </div>
 
+  <!-- Boutons de création (visibles scénaristes seulement) -->
+  <div class="creation-buttons" id="creationButtons">
+    <a href="https://manielnorrianiss.github.io/Fiches-Comedien-PNJ/" target="_blank" class="btn-create">
+      ➕ Nouvelle fiche PNJ
+    </a>
+    <a href="https://manielnorrianiss.github.io/figurant/" target="_blank" class="btn-create">
+      ➕ Nouvelle fiche Figurant
+    </a>
+  </div>
+
   <div class="search-wrap">
     <input type="text" id="searchInput" placeholder="Rechercher par nom..." oninput="applyFilters()">
   </div>
 
   <div class="filters">
     <div class="filter-group">
+      <label>Scénariste</label>
+      <select id="filterScenariste" onchange="applyFilters()"><option value="">Tous</option></select>
+    </div>
+    <div class="filter-group">
       <label>Lune</label>
-      <select id="filterLunes" onchange="applyFilters()"><option value="">Toutes</option></select>
+      <select id="filterLuneJeu" onchange="applyFilters()"><option value="">Toutes</option></select>
+    </div>
+    <div class="filter-group">
+      <label>Type de game</label>
+      <select id="filterTypeGame" onchange="applyFilters()"><option value="">Tous</option></select>
+    </div>
+    <div class="filter-group">
+      <label>Peuple du scénariste</label>
+      <select id="filterPeupleScenariste" onchange="applyFilters()"><option value="">Tous</option></select>
     </div>
     <div class="filter-group">
       <label>Race</label>
       <select id="filterRace" onchange="applyFilters()"><option value="">Toutes</option></select>
     </div>
     <div class="filter-group">
-      <label>Peuple</label>
+      <label>Peuple / Faction</label>
       <select id="filterPeuple" onchange="applyFilters()"><option value="">Tous</option></select>
     </div>
     <div class="filter-group">
-      <label>Classe</label>
-      <select id="filterClasse" onchange="applyFilters()"><option value="">Toutes</option></select>
+      <label>Joué par</label>
+      <select id="filterActeur" onchange="applyFilters()"><option value="">Tous</option></select>
     </div>
   </div>
 
@@ -478,8 +557,8 @@
 <!-- MODAL LOGIN SCENARISTE -->
 <div class="modal-overlay" id="loginModal" onclick="if(event.target===this) closeLoginModal()">
   <div class="modal">
-    <h2 id="modalTitle">Connexion scénariste</h2>
-    <p id="modalText">Entre le mot de passe pour débloquer la modification des fiches.</p>
+    <h2>Connexion scénariste</h2>
+    <p>Entre le mot de passe pour débloquer la création, modification et suppression des fiches.</p>
     <input type="password" id="passwordInput" placeholder="Mot de passe" autocomplete="current-password">
     <div class="modal-actions">
       <button onclick="closeLoginModal()">Annuler</button>
@@ -488,31 +567,32 @@
   </div>
 </div>
 
+<!-- MODAL SUPPRESSION -->
+<div class="modal-overlay" id="deleteModal" onclick="if(event.target===this) closeDeleteModal()">
+  <div class="modal">
+    <h2 class="danger">⚠ Supprimer la fiche?</h2>
+    <p>Tu vas supprimer la fiche : <strong id="deleteName"></strong></p>
+    <p style="color: var(--parchment-dark); font-size: 0.85rem;">Le fichier sera déplacé dans la corbeille de Drive. Tu peux le récupérer pendant 30 jours avant suppression définitive.</p>
+    <div class="modal-actions">
+      <button onclick="closeDeleteModal()">Annuler</button>
+      <button class="danger" onclick="confirmDelete()">Supprimer</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
-// ============================================================
-// CONFIGURATION
-// ============================================================
-
-// COLLE ICI L'URL /exec DE TON APPS SCRIPT BIBLIOTHEQUE
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbwNG2TMGG5HVftpxr8m8jHOxU4K5lLA6Cqr22aCk8MSlDKYt21WLX6z76MangTo7GZV/exec';
 
-// ============================================================
-// ETAT GLOBAL
-// ============================================================
-
 const state = {
-  fiches: [],          // toutes les fiches
-  filtered: [],        // fiches après filtres
-  currentTab: 'all',   // 'all' | 'PNJ' | 'Figurant'
-  isScenariste: false, // true si connecté
-  password: ''         // mot de passe scénariste (gardé en mémoire)
+  fiches: [],
+  filtered: [],
+  currentTab: 'all',
+  isScenariste: false,
+  password: '',
+  pendingDelete: null
 };
-
-// ============================================================
-// INITIALISATION
-// ============================================================
 
 async function init() {
   await loadFiches();
@@ -542,27 +622,34 @@ async function loadFiches() {
   }
 }
 
-// ============================================================
-// FILTRES & RECHERCHE
-// ============================================================
-
 function populateFilters() {
-  const lunes = new Set();
-  const races = new Set();
-  const peuples = new Set();
-  const classes = new Set();
+  const sets = {
+    scenariste: new Set(),
+    luneJeu: new Set(),
+    typeGame: new Set(),
+    peupleScenariste: new Set(),
+    race: new Set(),
+    peuple: new Set(),
+    acteur: new Set()
+  };
 
   state.fiches.forEach(f => {
-    if (f.lunes) lunes.add(f.lunes);
-    if (f.race) races.add(f.race);
-    if (f.peuple) peuples.add(f.peuple);
-    if (f.classe) classes.add(f.classe);
+    if (f.scenariste) sets.scenariste.add(f.scenariste);
+    if (f.lune_jeu) sets.luneJeu.add(f.lune_jeu);
+    if (f.type_game) sets.typeGame.add(f.type_game);
+    if (f.peuple_scenariste) sets.peupleScenariste.add(f.peuple_scenariste);
+    if (f.race) sets.race.add(f.race);
+    if (f.peuple) sets.peuple.add(f.peuple);
+    if (f.acteur) sets.acteur.add(f.acteur);
   });
 
-  fillSelect('filterLunes', lunes, 'Toutes');
-  fillSelect('filterRace', races, 'Toutes');
-  fillSelect('filterPeuple', peuples, 'Tous');
-  fillSelect('filterClasse', classes, 'Toutes');
+  fillSelect('filterScenariste', sets.scenariste, 'Tous');
+  fillSelect('filterLuneJeu', sets.luneJeu, 'Toutes');
+  fillSelect('filterTypeGame', sets.typeGame, 'Tous');
+  fillSelect('filterPeupleScenariste', sets.peupleScenariste, 'Tous');
+  fillSelect('filterRace', sets.race, 'Toutes');
+  fillSelect('filterPeuple', sets.peuple, 'Tous');
+  fillSelect('filterActeur', sets.acteur, 'Tous');
 }
 
 function fillSelect(id, values, allLabel) {
@@ -570,7 +657,6 @@ function fillSelect(id, values, allLabel) {
   const current = select.value;
   select.innerHTML = '<option value="">' + allLabel + '</option>';
 
-  // Trier alphabétiquement (les nombres en premier pour les lunes)
   const sorted = [...values].sort((a, b) => {
     const na = parseFloat(a), nb = parseFloat(b);
     if (!isNaN(na) && !isNaN(nb)) return na - nb;
@@ -588,18 +674,26 @@ function fillSelect(id, values, allLabel) {
 
 function applyFilters() {
   const search = document.getElementById('searchInput').value.toLowerCase().trim();
-  const lunes = document.getElementById('filterLunes').value;
-  const race = document.getElementById('filterRace').value;
-  const peuple = document.getElementById('filterPeuple').value;
-  const classe = document.getElementById('filterClasse').value;
+  const filters = {
+    scenariste: document.getElementById('filterScenariste').value,
+    luneJeu: document.getElementById('filterLuneJeu').value,
+    typeGame: document.getElementById('filterTypeGame').value,
+    peupleScenariste: document.getElementById('filterPeupleScenariste').value,
+    race: document.getElementById('filterRace').value,
+    peuple: document.getElementById('filterPeuple').value,
+    acteur: document.getElementById('filterActeur').value
+  };
 
   state.filtered = state.fiches.filter(f => {
     if (state.currentTab !== 'all' && f.type !== state.currentTab) return false;
     if (search && !f.nom.toLowerCase().includes(search)) return false;
-    if (lunes && f.lunes !== lunes) return false;
-    if (race && f.race !== race) return false;
-    if (peuple && f.peuple !== peuple) return false;
-    if (classe && f.classe !== classe) return false;
+    if (filters.scenariste && f.scenariste !== filters.scenariste) return false;
+    if (filters.luneJeu && f.lune_jeu !== filters.luneJeu) return false;
+    if (filters.typeGame && f.type_game !== filters.typeGame) return false;
+    if (filters.peupleScenariste && f.peuple_scenariste !== filters.peupleScenariste) return false;
+    if (filters.race && f.race !== filters.race) return false;
+    if (filters.peuple && f.peuple !== filters.peuple) return false;
+    if (filters.acteur && f.acteur !== filters.acteur) return false;
     return true;
   });
 
@@ -608,10 +702,9 @@ function applyFilters() {
 
 function clearFilters() {
   document.getElementById('searchInput').value = '';
-  document.getElementById('filterLunes').value = '';
-  document.getElementById('filterRace').value = '';
-  document.getElementById('filterPeuple').value = '';
-  document.getElementById('filterClasse').value = '';
+  ['filterScenariste','filterLuneJeu','filterTypeGame','filterPeupleScenariste','filterRace','filterPeuple','filterActeur'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
   applyFilters();
 }
 
@@ -622,10 +715,6 @@ function setTab(type) {
   });
   applyFilters();
 }
-
-// ============================================================
-// RENDU DE LA LISTE
-// ============================================================
 
 function renderList() {
   const list = document.getElementById('fichesList');
@@ -657,15 +746,26 @@ function renderCard(f) {
   if (f.role) detailsParts.push(escapeHtml(f.role));
   const meta2 = detailsParts.join(' <span class="sep">·</span> ');
 
+  const acteurLine = f.acteur ? `<div class="fiche-meta">Joué par : <strong>${escapeHtml(f.acteur)}</strong></div>` : '';
+  const scenLine = f.scenariste ? `<div class="fiche-meta" style="font-size:0.8rem;color:var(--parchment-dark);">Scénariste : ${escapeHtml(f.scenariste)}</div>` : '';
+
+  const safeName = escapeHtml(f.nom).replace(/'/g, "\\'");
+  const safeId = f.id;
+
   return `
-    <div class="${cardClass}" onclick="openFiche('${f.id}', '${escapeHtml(f.nom).replace(/'/g, "\\'")}')">
-      <div class="fiche-info">
+    <div class="${cardClass}">
+      <div class="fiche-info" onclick="openFiche('${safeId}', '${safeName}')">
         <div class="fiche-name">${escapeHtml(f.nom)}</div>
         ${meta1 ? `<div class="fiche-meta">${meta1}</div>` : ''}
         ${meta2 ? `<div class="fiche-meta">${meta2}</div>` : ''}
+        ${acteurLine}
+        ${scenLine}
         <div class="fiche-date">Modifiée le ${escapeHtml(f.lastUpdatedStr)}</div>
       </div>
-      <div class="fiche-type-badge">${typeBadge}</div>
+      <div class="fiche-actions">
+        <div class="fiche-type-badge">${typeBadge}</div>
+        <button class="btn-delete" onclick="askDelete('${safeId}', '${safeName}')">🗑 Supprimer</button>
+      </div>
     </div>
   `;
 }
@@ -674,10 +774,6 @@ function escapeHtml(s) {
   if (s === undefined || s === null) return '';
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
-
-// ============================================================
-// OUVERTURE D'UNE FICHE
-// ============================================================
 
 async function openFiche(id, nom) {
   showToast('Ouverture de « ' + nom + ' »...');
@@ -693,21 +789,19 @@ async function openFiche(id, nom) {
 
     let html = data.html;
 
-    // Si le scénariste n'est pas connecté, on retire les boutons d'édition de la fiche
     if (!state.isScenariste) {
-      // Cacher le bouton modifier dans la toolbar de la fiche
+      // Cacher boutons d'édition
       html = html.replace(/<button[^>]*id="editBtn"[^>]*>[\s\S]*?<\/button>/g, '');
       html = html.replace(/<button[^>]*id="saveBtn"[^>]*>[\s\S]*?<\/button>/g, '');
       html = html.replace(/<button[^>]*id="cancelBtn"[^>]*>[\s\S]*?<\/button>/g, '');
     } else {
-      // Si scénariste : injecter un script pour gérer la sauvegarde dans Drive
+      // Injecter script de sauvegarde dans Drive
       const saveScript = `
 <script>
 window._FICHE_ID = ${JSON.stringify(id)};
 window._GAS_URL = ${JSON.stringify(GAS_URL)};
 window._PASSWORD = ${JSON.stringify(state.password)};
 
-// Surcharger downloadModifiedFile pour sauvegarder dans Drive au lieu de télécharger
 window.downloadModifiedFile = async function() {
   const html = '<!DOCTYPE html>\\n' + document.documentElement.outerHTML;
   try {
@@ -716,6 +810,7 @@ window.downloadModifiedFile = async function() {
       mode: 'no-cors',
       headers: {'Content-Type': 'text/plain;charset=utf-8'},
       body: JSON.stringify({
+        action: 'update',
         id: window._FICHE_ID,
         html: html,
         password: window._PASSWORD
@@ -730,7 +825,6 @@ window.downloadModifiedFile = async function() {
       html = html.replace('</body>', saveScript + '</body>');
     }
 
-    // Ouvrir dans un nouvel onglet via Blob
     const blob = new Blob([html], {type: 'text/html;charset=utf-8'});
     const url = URL.createObjectURL(blob);
     window.open(url, '_blank');
@@ -741,9 +835,56 @@ window.downloadModifiedFile = async function() {
   }
 }
 
-// ============================================================
-// LOGIN SCENARISTE
-// ============================================================
+// ====== SUPPRESSION ======
+
+function askDelete(id, nom) {
+  if (!state.isScenariste) {
+    showToast('Tu dois être connecté en tant que scénariste', 'error');
+    return;
+  }
+  state.pendingDelete = { id: id, nom: nom };
+  document.getElementById('deleteName').textContent = nom;
+  document.getElementById('deleteModal').classList.add('show');
+}
+
+function closeDeleteModal() {
+  state.pendingDelete = null;
+  document.getElementById('deleteModal').classList.remove('show');
+}
+
+async function confirmDelete() {
+  if (!state.pendingDelete) return;
+  const { id, nom } = state.pendingDelete;
+  closeDeleteModal();
+
+  showToast('Suppression de « ' + nom + ' »...');
+
+  try {
+    await fetch(GAS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {'Content-Type': 'text/plain;charset=utf-8'},
+      body: JSON.stringify({
+        action: 'delete',
+        id: id,
+        password: state.password
+      })
+    });
+
+    // Optimistic UI : retirer la fiche localement
+    state.fiches = state.fiches.filter(f => f.id !== id);
+    applyFilters();
+    showToast('« ' + nom + ' » supprimée', 'success');
+
+  } catch (err) {
+    console.error(err);
+    showToast('Erreur de suppression', 'error');
+    // Recharger en cas d'erreur
+    loadFiches();
+  }
+}
+
+// ====== LOGIN SCENARISTE ======
 
 function openLoginModal() {
   if (state.isScenariste) {
@@ -769,43 +910,40 @@ function tryLogin() {
   const pw = document.getElementById('passwordInput').value.trim();
   if (!pw) return;
 
-  // Le mot de passe est validé côté serveur lors de chaque sauvegarde.
-  // Ici on stocke juste pour l'utiliser plus tard.
   state.password = pw;
   state.isScenariste = true;
   updateLoginUI();
   closeLoginModal();
-  showToast('Connecté en tant que scénariste');
+  showToast('Connecté en tant que scénariste', 'success');
+  // Re-rendre pour afficher les boutons supprimer
+  applyFilters();
 }
 
 function updateLoginUI() {
   const status = document.getElementById('loginStatus');
+  const creationButtons = document.getElementById('creationButtons');
+
   if (state.isScenariste) {
     status.classList.add('scenariste');
     status.innerHTML = '🔐 Scénariste';
+    creationButtons.classList.add('show');
+    document.body.classList.add('scenariste');
   } else {
     status.classList.remove('scenariste');
     status.innerHTML = '🔓 Lecteur';
+    creationButtons.classList.remove('show');
+    document.body.classList.remove('scenariste');
   }
 }
-
-// ============================================================
-// TOAST
-// ============================================================
 
 function showToast(msg, type) {
   const toast = document.getElementById('toast');
   toast.textContent = msg;
-  toast.classList.toggle('error', type === 'error');
-  toast.classList.add('show');
+  toast.className = 'toast show';
+  if (type) toast.classList.add(type);
   setTimeout(() => toast.classList.remove('show'), 2500);
 }
 
-// ============================================================
-// GO
-// ============================================================
-
-// Appui Enter dans le champ password
 document.getElementById('passwordInput').addEventListener('keydown', e => {
   if (e.key === 'Enter') tryLogin();
 });
