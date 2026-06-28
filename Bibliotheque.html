@@ -584,6 +584,8 @@
 
 <script>
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbwNG2TMGG5HVftpxr8m8jHOxU4K5lLA6Cqr22aCk8MSlDKYt21WLX6z76MangTo7GZV/exec';
+const CACHE_KEY = 'fleau_fiches_cache_v1';
+const CACHE_TS_KEY = 'fleau_fiches_cache_ts_v1';
 
 const state = {
   fiches: [],
@@ -600,25 +602,53 @@ async function init() {
 
 async function loadFiches() {
   const list = document.getElementById('fichesList');
-  list.innerHTML = '<div class="loading">Chargement des fiches</div>';
 
+  // 1) Affichage instantané depuis le cache localStorage
+  let hadCache = false;
+  try {
+    const cached = localStorage.getItem(CACHE_KEY);
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      if (Array.isArray(parsed) && parsed.length) {
+        state.fiches = parsed;
+        populateFilters();
+        applyFilters();
+        hadCache = true;
+      }
+    }
+  } catch (e) { console.warn('Cache illisible', e); }
+
+  if (!hadCache) {
+    list.innerHTML = '<div class="loading">Chargement des fiches</div>';
+  }
+
+  // 2) Rafraîchissement en arrière-plan
   try {
     const response = await fetch(GAS_URL + '?action=list');
     const data = await response.json();
 
     if (data.error) {
-      list.innerHTML = '<div class="empty">Erreur : ' + data.error + '</div>';
+      if (!hadCache) list.innerHTML = '<div class="empty">Erreur : ' + data.error + '</div>';
       return;
     }
 
     state.fiches = data.fiches || [];
+    try {
+      localStorage.setItem(CACHE_KEY, JSON.stringify(state.fiches));
+      localStorage.setItem(CACHE_TS_KEY, String(Date.now()));
+    } catch (e) { console.warn('Cache non sauvé', e); }
+
     populateFilters();
     applyFilters();
 
   } catch (err) {
     console.error(err);
-    list.innerHTML = '<div class="empty">Impossible de charger les fiches.<br>Vérifie l\'URL Apps Script.</div>';
-    document.getElementById('countBanner').textContent = '';
+    if (!hadCache) {
+      list.innerHTML = '<div class="empty">Impossible de charger les fiches.<br>Vérifie l\'URL Apps Script.</div>';
+      document.getElementById('countBanner').textContent = '';
+    } else {
+      showToast('Hors-ligne — fiches en cache affichées', 'error');
+    }
   }
 }
 
@@ -873,6 +903,7 @@ async function confirmDelete() {
 
     // Optimistic UI : retirer la fiche localement
     state.fiches = state.fiches.filter(f => f.id !== id);
+    try { localStorage.setItem(CACHE_KEY, JSON.stringify(state.fiches)); } catch (e) {}
     applyFilters();
     showToast('« ' + nom + ' » supprimée', 'success');
 
